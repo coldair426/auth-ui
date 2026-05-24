@@ -45,6 +45,9 @@ export default function LoginPage() {
     setLoadingProvider(provider);
     try {
       const { url } = await getSocialLoginUrl(provider, clientId, redirectUri, mode);
+      sessionStorage.setItem('auth_clientId', clientId);
+      sessionStorage.setItem('auth_redirectUri', redirectUri);
+      sessionStorage.setItem('auth_mode', mode);
       window.location.href = url;
     } catch {
       setLoadingProvider(null);
