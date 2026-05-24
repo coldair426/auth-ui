@@ -8,6 +8,8 @@ interface SocialLoginButtonProps {
   provider: Provider;
   onClick?: () => void;
   disabled?: boolean;
+  isLoading?: boolean;
+  isDimmed?: boolean;
 }
 
 const accentColors: Record<Provider, string> = {
@@ -16,9 +18,34 @@ const accentColors: Record<Provider, string> = {
   google: '#4285F4',
 };
 
-const providerConfig: Record<Provider, { label: string; icon: React.ReactNode }> = {
+const tintColors: Record<Provider, string> = {
+  naver: 'rgba(3, 199, 90, 0.08)',
+  kakao: 'rgba(254, 229, 0, 0.12)',
+  google: 'rgba(66, 133, 244, 0.08)',
+};
+
+const darkTintColors: Record<Provider, string> = {
+  naver: 'rgba(3, 199, 90, 0.15)',
+  kakao: 'rgba(254, 229, 0, 0.18)',
+  google: 'rgba(66, 133, 244, 0.15)',
+};
+
+const hoverTintColors: Record<Provider, string> = {
+  naver: 'rgba(3, 199, 90, 0.14)',
+  kakao: 'rgba(254, 229, 0, 0.2)',
+  google: 'rgba(66, 133, 244, 0.14)',
+};
+
+const hoverDarkTintColors: Record<Provider, string> = {
+  naver: 'rgba(3, 199, 90, 0.25)',
+  kakao: 'rgba(254, 229, 0, 0.3)',
+  google: 'rgba(66, 133, 244, 0.25)',
+};
+
+const providerConfig: Record<Provider, { label: string; ariaLabel: string; icon: React.ReactNode }> = {
   naver: {
     label: '네이버로 로그인',
+    ariaLabel: '네이버 계정으로 로그인',
     icon: (
       <svg width="16" height="16" viewBox="0 0 24 24" fill="#03C75A">
         <path d="M16.273 12.845L7.376 0H0v24h7.727V11.155L16.624 24H24V0h-7.727z" />
@@ -27,6 +54,7 @@ const providerConfig: Record<Provider, { label: string; icon: React.ReactNode }>
   },
   kakao: {
     label: '카카오로 로그인',
+    ariaLabel: '카카오 계정으로 로그인',
     icon: (
       <span
         className="flex items-center justify-center w-[18px] h-[18px] rounded-[4px] flex-shrink-0"
@@ -40,6 +68,7 @@ const providerConfig: Record<Provider, { label: string; icon: React.ReactNode }>
   },
   google: {
     label: 'Google로 로그인',
+    ariaLabel: '구글 계정으로 로그인',
     icon: (
       <svg width="16" height="16" viewBox="0 0 24 24" className="flex-shrink-0">
         <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -51,12 +80,19 @@ const providerConfig: Record<Provider, { label: string; icon: React.ReactNode }>
   },
 };
 
-export function SocialLoginButton({ provider, onClick, disabled = false }: SocialLoginButtonProps) {
+export function SocialLoginButton({
+  provider,
+  onClick,
+  disabled = false,
+  isLoading = false,
+  isDimmed = false,
+}: SocialLoginButtonProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [ripples, setRipples] = useState<{ x: number; y: number; id: number }[]>([]);
   const config = providerConfig[provider];
 
   function handleClick(e: MouseEvent<HTMLButtonElement>) {
+    if (disabled || isLoading || isDimmed) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const id = Date.now();
     setRipples((prev) => [...prev, { x: e.clientX - rect.left, y: e.clientY - rect.top, id }]);
@@ -66,25 +102,47 @@ export function SocialLoginButton({ provider, onClick, disabled = false }: Socia
 
   return (
     <motion.button
-      onMouseEnter={() => setIsHovered(true)}
+      onMouseEnter={() => !isLoading && !isDimmed && setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      whileHover={{ x: 4 }}
+      whileHover={!isLoading && !isDimmed ? { x: 3 } : {}}
+      whileTap={!isLoading && !isDimmed ? { scale: 0.97 } : {}}
       transition={{ type: 'spring', stiffness: 400, damping: 30 }}
       onClick={handleClick}
-      disabled={disabled}
-      className="relative w-full overflow-hidden flex items-center gap-3 text-sm font-medium text-gray-800 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer bg-black/[0.06] hover:bg-black/10 active:scale-[0.98]"
+      disabled={disabled || isLoading || isDimmed}
+      aria-label={config.ariaLabel}
+      className={`relative w-full h-14 overflow-hidden flex items-center gap-3.5 text-[15px] font-bold tracking-tight transition-all duration-300 ${
+        isDimmed ? 'opacity-30 pointer-events-none' : 'opacity-100'
+      } ${
+        disabled || isLoading || isDimmed ? 'cursor-not-allowed' : 'cursor-pointer'
+      } text-gray-800 dark:text-zinc-100`}
       style={{
-        border: '1px solid rgba(0,0,0,0.1)',
-        borderRadius: '12px',
-        padding: '12px 16px',
+        backgroundColor: isHovered && !isLoading 
+          ? `var(--btn-hover-bg, ${hoverTintColors[provider]})` 
+          : `var(--btn-bg, ${tintColors[provider]})`,
+        border: '1px solid rgba(0,0,0,0.06)',
+        borderRadius: '1rem',
+        padding: '0 20px',
       }}
     >
+      <style jsx>{`
+        button {
+          --btn-bg: ${tintColors[provider]};
+          --btn-hover-bg: ${hoverTintColors[provider]};
+        }
+        @media (prefers-color-scheme: dark) {
+          button {
+            --btn-bg: ${darkTintColors[provider]};
+            --btn-hover-bg: ${hoverDarkTintColors[provider]};
+            border-color: rgba(255, 255, 255, 0.08) !important;
+          }
+        }
+      `}</style>
       {/* 브랜드 컬러 accent bar */}
       <motion.span
         initial={{ scaleY: 0, opacity: 0 }}
-        animate={{ scaleY: isHovered ? 1 : 0, opacity: isHovered ? 1 : 0 }}
-        transition={{ duration: 0.15 }}
-        className="absolute left-0 top-[20%] h-[60%] w-[3px] rounded-sm origin-center"
+        animate={{ scaleY: isHovered && !isLoading ? 1 : 0, opacity: isHovered && !isLoading ? 1 : 0 }}
+        transition={{ duration: 0.2 }}
+        className="absolute left-0 top-[20%] h-[60%] w-[3px] rounded-r-[2px] origin-center"
         style={{ backgroundColor: accentColors[provider] }}
       />
 
@@ -92,24 +150,32 @@ export function SocialLoginButton({ provider, onClick, disabled = false }: Socia
       {ripples.map(({ x, y, id }) => (
         <span
           key={id}
-          className="absolute rounded-full pointer-events-none animate-ping"
+          className="absolute rounded-full pointer-events-none bg-black/5 animate-ping"
           style={{
-            left: x - 32,
-            top: y - 32,
-            width: 64,
-            height: 64,
-            backgroundColor: 'rgba(0,0,0,0.06)',
-            animationDuration: '0.5s',
-            animationIterationCount: 1,
+            left: x - 40,
+            top: y - 40,
+            width: 80,
+            height: 80,
+            animationDuration: '0.6s',
           }}
         />
       ))}
 
-      <span className="relative z-10 flex items-center justify-center w-[18px] flex-shrink-0">
-        {config.icon}
-      </span>
+      <div className="relative z-10 flex items-center justify-center w-[20px] h-[20px] flex-shrink-0">
+        {isLoading ? (
+          <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
+        ) : (
+          config.icon
+        )}
+      </div>
       <span className="relative z-10 flex-1 text-left">{config.label}</span>
-      <span className="relative z-10 text-black/25 text-base leading-none">→</span>
+      {!isLoading && (
+        <span className="relative z-10 text-black/20 text-lg font-light">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        </span>
+      )}
     </motion.button>
   );
 }

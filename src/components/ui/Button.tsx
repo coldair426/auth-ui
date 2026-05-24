@@ -10,15 +10,15 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantStyles = {
-  primary: 'bg-white text-gray-900 hover:bg-gray-100 disabled:bg-white/50',
-  secondary: 'bg-white/20 text-white hover:bg-white/30 border border-white/30 disabled:bg-white/10',
-  ghost: 'bg-transparent text-white hover:bg-white/10 disabled:opacity-40',
+  primary: 'bg-gray-900 text-white hover:bg-gray-800 shadow-sm disabled:bg-gray-400',
+  secondary: 'bg-white/20 text-white hover:bg-white/30 border border-white/25 backdrop-blur-md shadow-sm disabled:bg-white/10',
+  ghost: 'bg-transparent text-gray-600 hover:bg-black/5 disabled:opacity-40',
 };
 
 const sizeStyles = {
-  sm: 'h-8 px-3 text-sm gap-1.5',
-  md: 'h-11 px-5 text-base gap-2',
-  lg: 'h-13 px-6 text-lg gap-2.5',
+  sm: 'h-9 px-4 text-[13px] gap-2',
+  md: 'h-12 px-6 text-[15px] gap-2.5',
+  lg: 'h-14 px-8 text-[17px] gap-3',
 };
 
 export function Button({
@@ -35,9 +35,9 @@ export function Button({
     <button
       disabled={disabled || loading}
       className={[
-        'inline-flex items-center justify-center rounded-xl font-medium',
-        'transition-colors duration-150 cursor-pointer',
-        'disabled:cursor-not-allowed',
+        'inline-flex items-center justify-center rounded-2xl font-bold tracking-tight',
+        'transition-all duration-300 cursor-pointer active:scale-[0.97]',
+        'disabled:cursor-not-allowed disabled:scale-100',
         variantStyles[variant],
         sizeStyles[size],
         fullWidth ? 'w-full' : '',
@@ -47,10 +47,11 @@ export function Button({
         .join(' ')}
       {...props}
     >
-      {loading && (
+      {loading ? (
         <span className="inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+      ) : (
+        children
       )}
-      {children}
     </button>
   );
 }

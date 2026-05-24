@@ -1,6 +1,7 @@
 'use client';
 
 import { SocialLoginButton } from '@/components/auth/SocialLoginButton';
+import { PageLayout } from '@/components/ui/PageLayout';
 import { getClientInfo } from '@/lib/api/account';
 import { getSocialLoginUrl } from '@/lib/api/auth';
 import { useAuthStore } from '@/store/authStore';
@@ -13,17 +14,17 @@ const PROVIDERS: Provider[] = ['naver', 'kakao', 'google'];
 
 const FALLBACK_CLIENT: OAuthClient = {
   clientId: '',
-  name: 'Login',
+  name: 'Unified Auth',
   logoUrl: null,
-  gradientFrom: '#38BDF8',
-  gradientTo: '#818CF8',
+  gradientFrom: '#4F46E5',
+  gradientTo: '#7C3AED',
   textDark: false,
   allowedModes: ['redirect', 'popup'],
 };
 
 function WarningIcon() {
   return (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
       <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
       <line x1="12" y1="9" x2="12" y2="13" />
       <line x1="12" y1="17" x2="12.01" y2="17" />
@@ -33,7 +34,7 @@ function WarningIcon() {
 
 function LockIcon() {
   return (
-    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
       <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
       <path d="M7 11V7a5 5 0 0 1 10 0v4" />
     </svg>
@@ -56,6 +57,7 @@ export function LoginContent() {
   );
   const [retryKey, setRetryKey] = useState(0);
   const [loadingProvider, setLoadingProvider] = useState<Provider | null>(null);
+  const [isExiting, setIsExiting] = useState(false);
 
   useEffect(() => {
     if (!clientId) return;
@@ -66,251 +68,174 @@ export function LoginContent() {
         setClientInfo(info);
         setClientStatus('loaded');
       })
-      .catch(() => setClientStatus('error'));
+      .catch(() => {
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('[Dev Mock] 서비스 정보 API 호출 실패: 테스트 데이터를 로드합니다.');
+          const mockClient: OAuthClient = {
+            clientId,
+            name: 'Unified Auth',
+            logoUrl: null,
+            gradientFrom: '#4F46E5',
+            gradientTo: '#7C3AED',
+            textDark: false,
+            allowedModes: ['redirect', 'popup'],
+          };
+          setClient(mockClient);
+          setClientInfo(mockClient);
+          setClientStatus('loaded');
+          return;
+        }
+        setClientStatus('error');
+      });
   }, [clientId, setClientInfo, retryKey]);
 
   async function handleLogin(provider: Provider) {
-    if (!clientId || loadingProvider) return;
+    if (!clientId || loadingProvider || isExiting) return;
     setLoadingProvider(provider);
     try {
       const { url } = await getSocialLoginUrl(provider, clientId, redirectUri, mode);
       sessionStorage.setItem('auth_clientId', clientId);
       sessionStorage.setItem('auth_redirectUri', redirectUri);
       sessionStorage.setItem('auth_mode', mode);
-      window.location.assign(url);
+      
+      setIsExiting(true);
+      setTimeout(() => {
+        window.location.assign(url);
+      }, 400);
     } catch {
       setLoadingProvider(null);
     }
   }
 
-  const from = client.gradientFrom;
-  const to = client.gradientTo;
-  const showCard = isInvalid || clientStatus !== 'loading';
-
   return (
-    <main className="fixed inset-0 overflow-hidden" style={{ backgroundColor: '#e8f4ff' }}>
-      {/* 배경 Orb 1 — 좌상단, 8s drift */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{
-          opacity: [0, 0.65, 0.65, 0.65],
-          x: [0, 30, -20, 0],
-          y: [0, -25, 20, 0],
-          scale: [1, 1.06, 0.97, 1],
-        }}
-        transition={{
-          opacity: { duration: 1.4 },
-          x: { duration: 8, repeat: Infinity, ease: 'easeInOut' },
-          y: { duration: 8, repeat: Infinity, ease: 'easeInOut' },
-          scale: { duration: 8, repeat: Infinity, ease: 'easeInOut' },
-        }}
-        className="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full pointer-events-none"
-        style={{ backgroundColor: from, filter: 'blur(80px)' }}
-      />
-      {/* 배경 Orb 2 — 우하단, 10s drift */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{
-          opacity: [0, 0.65, 0.65, 0.65],
-          x: [0, -25, 20, 0],
-          y: [0, 20, -30, 0],
-          scale: [1, 1.04, 0.98, 1],
-        }}
-        transition={{
-          opacity: { duration: 1.4, delay: 0.12 },
-          x: { duration: 10, repeat: Infinity, ease: 'easeInOut' },
-          y: { duration: 10, repeat: Infinity, ease: 'easeInOut' },
-          scale: { duration: 10, repeat: Infinity, ease: 'easeInOut' },
-        }}
-        className="absolute -bottom-40 -right-40 w-[600px] h-[600px] rounded-full pointer-events-none"
-        style={{ backgroundColor: to, filter: 'blur(80px)' }}
-      />
-      {/* 배경 Orb 3 — 우상단, 7s drift */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{
-          opacity: [0, 0.45, 0.45, 0.45],
-          x: [0, 20, -30, 0],
-          y: [0, 25, -15, 0],
-          scale: [1, 1.08, 0.95, 1],
-        }}
-        transition={{
-          opacity: { duration: 1.6, delay: 0.22 },
-          x: { duration: 7, repeat: Infinity, ease: 'easeInOut' },
-          y: { duration: 7, repeat: Infinity, ease: 'easeInOut' },
-          scale: { duration: 7, repeat: Infinity, ease: 'easeInOut' },
-        }}
-        className="absolute -top-32 -right-32 w-[460px] h-[460px] rounded-full pointer-events-none"
-        style={{ backgroundColor: to, filter: 'blur(80px)' }}
-      />
-
-      {/* 카드 */}
-      {showCard && (
-        <div className="fixed bottom-0 left-0 right-0 flex justify-center items-end md:pb-10">
-          <motion.div
-            initial={{ y: 72, opacity: 0, scale: 0.92, filter: 'blur(8px)' }}
-            animate={{ y: 0, opacity: 1, scale: 1, filter: 'blur(0px)' }}
-            transition={{ type: 'spring', stiffness: 300, damping: 30, delay: 0.3 }}
-            className="w-full md:w-[360px] rounded-t-3xl md:rounded-2xl backdrop-blur-2xl"
-            style={{
-              backgroundColor: 'rgba(255,255,255,0.55)',
-              border: '1px solid rgba(255,255,255,0.7)',
-            }}
-          >
-            <div
-              className="px-6 pt-8"
-              style={{ paddingBottom: 'max(2rem, env(safe-area-inset-bottom))' }}
-            >
-              {/* ── 케이스 1: clientId 없음 ── */}
-              {isInvalid ? (
-                <motion.div
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: 0.5 }}
-                  className="flex flex-col items-center text-center mb-6"
-                >
-                  <div
-                    className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4"
-                    style={{ background: 'linear-gradient(135deg, #F59E0B, #EF4444)' }}
-                  >
-                    <WarningIcon />
-                  </div>
-                  <h1 className="text-xl font-bold text-gray-900 mb-2">잘못된 접근이에요</h1>
-                  <p className="text-sm text-gray-500 leading-relaxed">
-                    올바른 서비스 링크를 통해 다시 접속해주세요.
-                  </p>
-                </motion.div>
-              ) : (
-                <>
-                  {/* ── 로고 링 + 타이틀 ── */}
-                  <div className="flex flex-col items-center mb-5">
-                    {/* 로고 링 */}
-                    <motion.div
-                      animate={{ scale: [0, 1.15, 1] }}
-                      transition={{ duration: 0.5, delay: 0.7, times: [0, 0.7, 1] }}
-                      className="w-16 h-16 rounded-2xl flex items-center justify-center mb-3 overflow-hidden relative"
-                      style={{ background: `linear-gradient(135deg, ${from}, ${to})` }}
-                    >
-                      {/* 회전하는 그라디언트 오버레이 */}
-                      <motion.div
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
-                        className="absolute inset-[-50%] pointer-events-none"
-                        style={{
-                          background: `conic-gradient(from 0deg, transparent 60%, rgba(255,255,255,0.25) 80%, transparent 100%)`,
-                        }}
-                      />
-                      {clientStatus === 'error' ? (
-                        <LockIcon />
-                      ) : client.logoUrl ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={client.logoUrl} alt={client.name} width={36} height={36} className="object-contain relative z-10" />
-                      ) : (
-                        <span className="text-white text-xl font-bold relative z-10">{client.name[0]}</span>
-                      )}
-                    </motion.div>
-
-                    {/* 프로젝트명 */}
-                    <motion.p
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.3, delay: 0.85 }}
-                      className="text-xs text-black/40 mb-1"
-                    >
-                      {clientStatus === 'error' ? '서비스' : client.name}
-                    </motion.p>
-
-                    {/* 타이틀 */}
-                    <motion.h1
-                      initial={{ opacity: 0, y: 4 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3, delay: 0.9 }}
-                      className="text-2xl font-bold text-gray-900"
-                    >
-                      {clientStatus === 'error' ? '서비스 로그인' : '로그인'}
-                    </motion.h1>
-                  </div>
-
-                  {/* ── 케이스 2: API 실패 안내 + 재시도 ── */}
-                  {clientStatus === 'error' && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.3, delay: 1.0 }}
-                      className="mb-4 px-1"
-                    >
-                      <p className="text-xs text-center text-gray-500 mb-3">
-                        서비스 정보를 불러오지 못했어요.
-                        <br />
-                        잠시 후 다시 시도해주세요.
-                      </p>
-                      <button
-                        onClick={() => setRetryKey((k) => k + 1)}
-                        className="w-full h-9 rounded-xl text-sm font-medium text-gray-600 transition-colors cursor-pointer hover:bg-black/[0.06]"
-                        style={{
-                          backgroundColor: 'rgba(0,0,0,0.04)',
-                          border: '1px solid rgba(0,0,0,0.08)',
-                        }}
-                      >
-                        다시 시도
-                      </button>
-                    </motion.div>
-                  )}
-
-                  {/* ── 케이스 3: 소셜 버튼 + 푸터 ── */}
-                  {clientStatus === 'loaded' && (
-                    <>
-                      {/* 구분선 */}
-                      <motion.div
-                        initial={{ opacity: 0, scaleX: 0 }}
-                        animate={{ opacity: 1, scaleX: 1 }}
-                        transition={{ duration: 0.3, delay: 0.95 }}
-                        className="h-px bg-black/[0.06] mb-4 origin-left"
-                      />
-
-                      {/* 소셜 버튼 */}
-                      <div className="flex flex-col gap-2.5">
-                        {PROVIDERS.map((provider, index) => (
-                          <motion.div
-                            key={provider}
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{
-                              duration: 0.35,
-                              delay: 1.05 + index * 0.1,
-                              ease: 'easeOut',
-                            }}
-                          >
-                            <SocialLoginButton
-                              provider={provider}
-                              onClick={() => handleLogin(provider)}
-                              disabled={!!loadingProvider}
-                            />
-                          </motion.div>
-                        ))}
-                      </div>
-
-                      {/* 푸터 */}
-                      <motion.p
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.3, delay: 1.4 }}
-                        className="mt-5 text-center text-xs text-black/30"
-                      >
-                        로그인 시{' '}
-                        <span className="underline underline-offset-2 cursor-pointer text-black/50">이용약관</span>
-                        {' '}및{' '}
-                        <span className="underline underline-offset-2 cursor-pointer text-black/50">개인정보처리방침</span>에
-                        동의합니다.
-                      </motion.p>
-                    </>
-                  )}
-                </>
-              )}
-            </div>
-          </motion.div>
+    <PageLayout
+      isExiting={isExiting}
+      isLoading={clientStatus === 'loading'}
+      isInvalid={isInvalid}
+      from={client.gradientFrom}
+      to={client.gradientTo}
+      width={360}
+    >
+      {/* ── 로딩 상태 (Skeleton UI) ── */}
+      {clientStatus === 'loading' && !isInvalid && (
+        <div className="flex flex-col items-center animate-pulse">
+          <div className="w-16 h-16 rounded-[22px] bg-black/5 dark:bg-white/5 mb-4" />
+          <div className="h-4 w-20 bg-black/5 dark:bg-white/5 rounded-full mb-2" />
+          <div className="h-8 w-32 bg-black/5 dark:bg-white/5 rounded-full mb-8" />
+          <div className="w-full h-px bg-black/5 dark:bg-white/5 mb-5" />
+          <div className="flex flex-col gap-3 w-full mb-6">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="w-full h-14 rounded-2xl bg-black/5 dark:bg-white/5" />
+            ))}
+          </div>
         </div>
       )}
-    </main>
+
+      {/* ── 에러 상태 ── */}
+      {clientStatus === 'error' && !isInvalid && (
+        <div className="flex flex-col items-center">
+          <div className="w-16 h-16 rounded-[22px] bg-red-500/10 flex items-center justify-center mb-4 text-red-500">
+            <LockIcon />
+          </div>
+          <h1 className="text-2xl font-black text-gray-900 dark:text-zinc-100 tracking-tight mb-6">연결 오류</h1>
+          <div className="bg-red-50/60 dark:bg-red-500/5 backdrop-blur-sm rounded-2xl p-5 mb-6 border border-red-100/50 dark:border-red-500/10 w-full">
+            <p className="text-[14px] text-center text-red-700/80 dark:text-red-400/80 font-semibold leading-relaxed">
+              서비스 정보를 불러오지 못했어요.<br />
+              통신 상태를 확인해주세요.
+            </p>
+          </div>
+          <motion.button
+            whileHover={{ scale: 1.02, backgroundColor: 'var(--btn-hover)' }}
+            whileTap={{ scale: 0.97 }}
+            onClick={() => setRetryKey((k) => k + 1)}
+            className="w-full h-14 bg-gray-900 dark:bg-zinc-100 text-white dark:text-black rounded-2xl text-[15px] font-bold tracking-tight shadow-lg transition-all cursor-pointer flex items-center justify-center gap-2.5"
+            style={{ '--btn-hover': '#1f2937' } as any}
+            aria-label="데이터 로드 재시도"
+          >
+            <motion.div animate={{ rotate: 360 }} transition={{ duration: 4, repeat: Infinity, ease: "linear" }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M23 4v6h-6" /><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+              </svg>
+            </motion.div>
+            다시 시도하기
+          </motion.button>
+        </div>
+      )}
+
+      {/* ── 케이스 1: clientId 없음 ── */}
+      {isInvalid && (
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex flex-col items-center text-center py-4"
+        >
+          <div className="w-20 h-20 rounded-[24px] bg-amber-500 flex items-center justify-center mb-6 shadow-lg shadow-amber-500/20 text-white">
+            <WarningIcon />
+          </div>
+          <h1 className="text-2xl font-black text-gray-900 dark:text-zinc-100 tracking-tight mb-3">서비스 연결이 필요해요</h1>
+          <p className="text-[15px] text-gray-500 dark:text-zinc-400 leading-relaxed max-w-[240px] mb-8 font-medium">
+            올바른 서비스 링크를 통해<br />다시 접속해주시겠어요?
+          </p>
+          <motion.button 
+            whileHover={{ scale: 1.02, backgroundColor: '#1f2937' }}
+            whileTap={{ scale: 0.97 }}
+            onClick={() => window.history.back()}
+            className="w-full h-14 bg-gray-900 dark:bg-zinc-100 text-white dark:text-black rounded-2xl text-[15px] font-bold tracking-tight shadow-md transition-all cursor-pointer flex items-center justify-center"
+            aria-label="이전 페이지로 돌아가기"
+          >
+            이전 페이지로 돌아가기
+          </motion.button>
+        </motion.div>
+      )}
+
+      {/* ── 정상 상태 ── */}
+      {clientStatus === 'loaded' && !isInvalid && (
+        <>
+          <div className="flex flex-col items-center mb-6">
+            <motion.div
+              initial={{ scale: 0, rotate: -15 }}
+              animate={{ scale: [0, 1.1, 1], rotate: 0 }}
+              transition={{ scale: { duration: 0.5, times: [0, 0.7, 1], ease: "easeOut", delay: 0.7 }, rotate: { type: 'spring', stiffness: 300, damping: 20, delay: 0.7 } }}
+              className="w-16 h-16 rounded-[22px] flex items-center justify-center mb-4 overflow-hidden relative shadow-xl shadow-black/5"
+              style={{ background: `linear-gradient(135deg, ${client.gradientFrom}, ${client.gradientTo})` }}
+            >
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
+                className="absolute inset-[-50%] pointer-events-none"
+                style={{ background: `conic-gradient(from 0deg, transparent 60%, rgba(255,255,255,0.3) 80%, transparent 100%)` }}
+              />
+              {client.logoUrl ? (
+                <img src={client.logoUrl} alt={client.name} width={38} height={38} className="object-contain relative z-10 drop-shadow-sm" />
+              ) : (
+                <span className="text-white text-2xl font-black relative z-10 tracking-tight">{client.name[0]}</span>
+              )}
+            </motion.div>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4, delay: 0.85 }} className="px-2.5 py-0.5 rounded-full bg-black/[0.04] dark:bg-white/5 mb-2">
+              <p className="text-[10px] font-bold text-black/50 dark:text-white/40 tracking-widest uppercase">{client.name}</p>
+            </motion.div>
+            <motion.h1 initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.9 }} className="text-[26px] font-black text-gray-900 dark:text-zinc-100 tracking-tight">반가워요!</motion.h1>
+          </div>
+          
+          <motion.div initial={{ opacity: 0, scaleX: 0 }} animate={{ opacity: 1, scaleX: 1 }} transition={{ duration: 0.3, delay: 0.95 }} className="h-px bg-gradient-to-r from-transparent via-black/[0.08] dark:via-white/10 to-transparent mb-5" />
+          
+          <div className="flex flex-col gap-3 mb-6">
+            {PROVIDERS.map((provider, index) => (
+              <motion.div key={provider} initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4, delay: 1.05 + index * 0.08 }}>
+                <SocialLoginButton provider={provider} onClick={() => handleLogin(provider)} disabled={!!loadingProvider} isLoading={loadingProvider === provider} isDimmed={!!loadingProvider && loadingProvider !== provider} />
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4, delay: 1.4 }} className="text-center text-[11px] font-medium text-black/25 dark:text-white/20 flex items-center justify-center gap-1.5">
+            로그인 시{' '}
+            <span className="hover:text-black/60 dark:hover:text-white/50 transition-colors cursor-pointer underline underline-offset-2 decoration-black/10">이용약관</span>
+            {' '}&{' '}
+            <span className="hover:text-black/60 dark:hover:text-white/50 transition-colors cursor-pointer underline underline-offset-2 decoration-black/10">개인정보처리방침</span>
+            에 동의합니다.
+          </motion.div>
+        </>
+      )}
+    </PageLayout>
   );
 }

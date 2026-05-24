@@ -1,5 +1,1 @@
-<!-- BEGIN:nextjs-agent-rules -->
-# This is NOT the Next.js you know
-
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
-<!-- END:nextjs-agent-rules -->
+All coding conventions, architecture guidelines, and project rules are defined in the `AI_RULES.md` file located in the root directory. You MUST read `AI_RULES.md` first before generating or modifying any code, and strictly adhere to its instructions.

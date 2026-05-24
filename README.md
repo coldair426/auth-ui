@@ -1,144 +1,90 @@
-# auth-ui
+# Unified Auth UI
 
-여러 사이드 프로젝트에서 공유하는 **공통 인증 UI** 서버입니다.
-소셜 로그인(네이버 / 카카오 / 구글)을 통해 사용자를 인증하고, `clientId`로 어느 프로젝트에서 온 요청인지 구별합니다.
-
-백엔드 인증 서버([auth-server](#관련-레포))와 연동하여 동작하며, JWT는 RS256 비대칭키 방식으로 발급됩니다.
+여러 서비스에서 공유하여 사용하는 **범용 통합 인증 UI 서비스**입니다.  
+`clientId`를 기반으로 각 프로젝트의 브랜딩(로고, 컬러, 제목 등)을 동적으로 반영하며, 심리학 및 UX 원칙에 기반한 프리미엄 사용자 경험을 제공합니다.
 
 ---
 
-## 기술 스택
+## 🎨 디자인 및 UX 철학 (Design Principles)
 
-| 분류 | 기술 |
-|------|------|
-| 프레임워크 | Next.js 14 (App Router) |
-| 언어 | TypeScript |
-| 스타일 | Tailwind CSS |
-| 폼 | react-hook-form + zod |
-| 상태 관리 | Zustand |
-| HTTP 클라이언트 | axios |
-| 배포 | Vercel |
+본 프로젝트는 단순한 기능을 넘어, 사용자의 인지 부하를 줄이고 신뢰감을 주는 **Premium Minimalist** 디자인을 지향합니다.
+
+- **인지 심리학 기반**: 게슈탈트 법칙을 활용한 소셜 버튼 그룹화와 브랜드별 파스텔 틴트(Option B) 적용으로 0.1초 이내의 직관적 인지를 돕습니다.
+- **유니버설 디자인**: 에러 상황에서도 명확한 탈출구(CTA)를 제공하며, 고대비 버튼 설정을 통해 누구나 쉽게 조작할 수 있도록 설계되었습니다.
+- **마이크로 인터랙션**: Framer Motion의 물리 엔진(Spring)을 활용한 부드러운 입장/퇴장 애니메이션과 버튼 클릭 피드백으로 조작의 즐거움을 제공합니다.
+- **다크 모드 최적화**: OS 설정에 따른 자동 테마 전환과 다크 모드 전용 브랜드 틴트 컬러를 지원하여 모든 환경에서 일관된 경험을 제공합니다.
+- **동적 브랜딩**: 하나의 시스템이지만, 접속한 `clientId`에 따라 로고, 배경 그라데이션, 브라우저 탭 이름, 파비콘까지 실시간으로 변화합니다.
 
 ---
 
-## 주요 특징
+## 🔄 인증 프로세스 (Auth Process)
 
-### JWT RS256 비대칭키 인증
-- auth-server가 Private Key로 JWT 서명
-- 각 프로젝트 백엔드는 Public Key로 자체 검증 (auth-server 재호출 불필요)
-- Access Token: 메모리 저장, 만료 15분 / Refresh Token: HttpOnly Cookie, 만료 7~30일
+다른 프로젝트(Client)에서 이 시스템을 연동할 때의 전체 흐름입니다.
 
-### clientId 기반 멀티 프로젝트
-- 각 사이드 프로젝트는 고유한 `clientId`를 가짐
-- 프로젝트별 로고, 그라데이션 컬러 등 UI가 독립적으로 구성됨
-- 프로젝트 가입 여부도 독립 관리 (A 프로젝트 가입 ≠ B 프로젝트 가입)
-
-### 소셜 계정 통합
-- 자동 계정 통합 없음 (이메일/이름 기반 자동 매칭 불가)
-- 사용자가 설정 페이지에서 직접 소셜 계정 연동/해제
-- 마지막 소셜 계정은 해제 불가 (로그인 수단 보호)
-
----
-
-## 인증 흐름
-
+### 1. 인증 요청 (Redirect)
+클라이언트 서비스는 사용자를 아래 URL로 리다이렉트 시킵니다.
 ```
-프로젝트 → auth-ui (clientId, redirectUri, mode 전달)
-           ↓
-        clientId로 로고/컬러 조회 후 로그인 화면 렌더링
-           ↓
-        소셜 로그인 진행
-           ↓
-        auth-server: 유저 처리 + 프로젝트 가입 여부 확인
-           ↓ (미가입 시)
-        /join 가입 페이지
-           ↓
-        JWT 발급 (RS256)
-           ↓
-    mode=redirect: redirectUri로 이동 + token 전달
-    mode=popup:    postMessage로 token 전달 후 팝업 닫힘
-           ↓
-    프로젝트 백엔드: Public Key로 JWT 자체 검증
+https://auth.yourdomain.com/login?clientId={MY_CLIENT_ID}&redirectUri={MY_REDIRECT_URI}&mode=redirect
 ```
+- **clientId**: 프로젝트 식별자 (로고 및 테마 결정)
+- **redirectUri**: 인증 완료 후 돌아갈 주소
+- **mode**: `redirect` 또는 `popup` 방식 선택
+
+### 2. 테마 동적 로드
+시스템은 서버 사이드에서 `clientId`를 분석하여 다음을 수행합니다.
+- 브라우저 탭 제목 및 파비콘을 해당 서비스의 정보로 변경
+- 서비스 고유 로고 및 브랜드 컬러 그라데이션 렌더링
+- 사용자에게 친숙한 해당 서비스만의 로그인 환경 제공
+
+### 3. 소셜 인증 및 콜백
+사용자가 소셜 버튼을 클릭하면 인증 서버(`auth-server`)를 거쳐 콜백 처리가 진행됩니다.
+- 신규 유저인 경우 가입 동의 페이지(`/join`)로 이동합니다.
+- 기존 유저이거나 가입 완료 시 JWT 토큰이 발급됩니다.
+
+### 4. 토큰 전달 및 귀환
+설정된 `mode`에 따라 클라이언트 서비스로 토큰을 전달합니다.
+- **Redirect 모드**: `redirectUri`로 이동하며 쿼리 파라미터로 토큰을 전달합니다.
+- **Popup 모드**: `window.opener.postMessage`를 통해 토큰을 전달하고 팝업을 닫습니다.
 
 ---
 
-## 페이지 구성
+## 📱 주요 페이지 및 기능
 
-| 경로 | 설명 |
-|------|------|
-| `/login` | 소셜 로그인 선택 화면. `clientId`, `redirectUri`, `mode` 수신 |
-| `/join` | 프로젝트 가입 페이지 |
-| `/callback/[provider]` | 소셜 로그인 콜백 처리 |
-| `/settings` | 계정 설정 |
-| `/settings/connections` | 소셜 계정 연동 관리 |
-| `/error` | 에러 페이지 |
+| 경로 | 설명 | 동적 변경 요소 |
+|------|------|------|
+| `/login` | 메인 로그인 화면 | 로고, 그라데이션, 타이틀, 파비콘 |
+| `/join` | 서비스 가입 동의 | 로고, 브랜드 테마, 서비스 명칭 |
+| `/settings/connections` | 소셜 계정 연동 관리 | 사용자 정보 및 연결된 소셜 계정 |
 
 ---
 
-## 프로젝트 구조
+## 🛠 기술 스택
 
-```
-src/
-├── app/                      # Next.js App Router 페이지
-│   ├── login/
-│   ├── join/
-│   ├── callback/[provider]/
-│   ├── settings/
-│   │   └── connections/
-│   └── error/
-├── components/
-│   ├── ui/                   # 공통 UI 컴포넌트
-│   └── auth/                 # 인증 관련 컴포넌트
-├── lib/
-│   └── api/                  # 백엔드 API 호출 함수
-├── store/                    # Zustand 전역 상태
-└── types/                    # TypeScript 타입 정의
-```
+- **Framework**: Next.js 16 (App Router / Turbopack)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS 4, Framer Motion
+- **State**: Zustand
+- **API**: Axios (Interceptors for Token Refresh)
+- **Security**: Strict CSP, X-Frame-Options (Clickjacking Protection)
+- **Accessibility**: ARIA labels compliant
 
 ---
 
-## 로컬 실행 방법
+## 🚀 로컬 실행 및 개발 가이드
 
 ```bash
 # 1. 의존성 설치
-npm install
+yarn install
 
-# 2. 환경변수 파일 생성
+# 2. 환경변수 설정
 cp .env.example .env.local
-# .env.local 파일을 열어 환경변수 값을 채워주세요
 
 # 3. 개발 서버 실행
-npm run dev
+yarn dev
 ```
 
-브라우저에서 [http://localhost:3000](http://localhost:3000)으로 접속합니다.
-
----
-
-## 환경변수
-
-`.env.local` 파일을 프로젝트 루트에 생성하고 아래 변수를 설정하세요.
-
-```env
-# 백엔드 Auth Server의 URL
-NEXT_PUBLIC_API_URL=http://localhost:8080
-
-# 이 프론트엔드의 URL (소셜 로그인 콜백 주소 생성에 사용)
-NEXT_PUBLIC_APP_URL=http://localhost:3000
-```
-
-| 변수명 | 설명 |
-|--------|------|
-| `NEXT_PUBLIC_API_URL` | 백엔드 Auth Server URL |
-| `NEXT_PUBLIC_APP_URL` | 이 프론트엔드의 배포 URL |
-
-> `NEXT_PUBLIC_` 접두사가 붙은 변수는 브라우저에서도 접근 가능합니다.
-
----
-
-## 관련 레포
-
-| 레포 | 설명 |
-|------|------|
-| [auth-server](https://github.com/coldair426/auth-server) | 인증 백엔드 (Spring Boot / Kotlin) |
+### 개발 편의를 위한 우회 전략 (Local Bypass)
+빅테크 개발 문화를 반영하여, 로컬 환경(`development`)에서는 백엔드 서버 없이도 UI 개발이 가능하도록 아래 기능이 활성화되어 있습니다.
+- **Auth Bypass**: 토큰이 없어도 `/settings` 등 인증 페이지 접근 가능.
+- **API Fallback**: API 호출 실패 시 자동으로 Mock 데이터를 로드하여 UI 레이아웃 확인 가능.
+- **Security Bypass**: 로컬 테스트를 방해하는 CSP 정책 등이 개발 모드에서는 자동 해제됨.

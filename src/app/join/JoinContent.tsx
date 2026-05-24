@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/Button';
+import { PageLayout } from '@/components/ui/PageLayout';
 import { getClientInfo } from '@/lib/api/account';
 import { joinProject } from '@/lib/api/auth';
 import { useAuthStore } from '@/store/authStore';
@@ -34,7 +35,24 @@ export function JoinContent() {
         setClient(info);
         setClientInfo(info);
       })
-      .catch(() => router.replace('/error?code=INVALID_CLIENT'));
+      .catch(() => {
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('[Dev Mock] 서비스 정보 API 호출 실패: 테스트 데이터를 로드합니다.');
+          const mockClient: OAuthClient = {
+            clientId,
+            name: 'Unified Auth',
+            logoUrl: null,
+            gradientFrom: '#4F46E5',
+            gradientTo: '#7C3AED',
+            textDark: false,
+            allowedModes: ['redirect', 'popup'],
+          };
+          setClient(mockClient);
+          setClientInfo(mockClient);
+          return;
+        }
+        router.replace('/error?code=INVALID_CLIENT');
+      });
   }, [clientId, router, storedClientInfo, setClientInfo]);
 
   function handleComplete(accessToken: string) {
@@ -76,85 +94,73 @@ export function JoinContent() {
   const subTextColor = client.textDark ? 'text-black/50' : 'text-white/60';
 
   return (
-    <main className="fixed inset-0 overflow-hidden">
-      <div
-        className="absolute inset-0"
-        style={{
-          background: `linear-gradient(135deg, ${client.gradientFrom}, ${client.gradientTo})`,
+    <PageLayout from={client.gradientFrom} to={client.gradientTo} width={360}>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ 
+          scale: { duration: 0.5, times: [0, 0.7, 1], ease: "easeOut", delay: 0.4 },
+          opacity: { duration: 0.3, delay: 0.4 }
         }}
-      />
-      <div
-        className="absolute -top-40 -left-40 w-[560px] h-[560px] rounded-full blur-3xl opacity-50 pointer-events-none"
-        style={{ backgroundColor: client.gradientFrom }}
-      />
-      <div
-        className="absolute -bottom-40 -right-40 w-[560px] h-[560px] rounded-full blur-3xl opacity-50 pointer-events-none"
-        style={{ backgroundColor: client.gradientTo }}
-      />
+        className="flex flex-col items-center gap-4 mb-3"
+      >
+        {client.logoUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={client.logoUrl}
+            alt={client.name}
+            width={72}
+            height={72}
+            className="rounded-[24px] object-contain shadow-xl shadow-black/5"
+          />
+        ) : (
+          <div 
+            className="w-16 h-16 rounded-[22px] flex items-center justify-center text-white text-2xl font-black"
+            style={{ background: `linear-gradient(135deg, ${client.gradientFrom}, ${client.gradientTo})` }}
+          >
+            {client.name[0]}
+          </div>
+        )}
+        <h1 className={`text-2xl font-black tracking-tight ${textColor}`}>{client.name}</h1>
+      </motion.div>
+
+      <motion.p
+        initial={{ opacity: 0, y: 4 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.55 }}
+        className={`text-center text-[15px] font-medium leading-relaxed mb-8 ${subTextColor}`}
+      >
+        처음 방문하셨네요.<br />
+        <span className="font-bold">{client.name}</span>에 가입하고<br />서비스를 이용해보세요.
+      </motion.p>
 
       <motion.div
-        initial={{ y: 48, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.45, delay: 0.1, ease: [0.34, 1.56, 0.64, 1] }}
-        className={[
-          'absolute backdrop-blur-xl',
-          'md:bottom-8 md:left-1/2 md:-translate-x-1/2 md:w-[360px] md:rounded-2xl',
-          'max-md:bottom-0 max-md:left-0 max-md:right-0 max-md:rounded-t-2xl',
-        ].join(' ')}
-        style={{
-          backgroundColor: 'rgba(255, 255, 255, 0.15)',
-          border: '1px solid rgba(255, 255, 255, 0.25)',
-        }}
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.7 }}
+        className="flex flex-col gap-3"
       >
-        <div
-          className="px-6 pt-8"
-          style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))' }}
+        <Button 
+          variant={client.textDark ? 'primary' : 'secondary'} 
+          fullWidth 
+          loading={joining} 
+          disabled={canceling} 
+          onClick={handleJoin}
+          className="h-14 rounded-2xl"
         >
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35, delay: 0.3 }}
-            className="flex flex-col items-center gap-3 mb-2"
-          >
-            {client.logoUrl && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={client.logoUrl}
-                alt={client.name}
-                width={56}
-                height={56}
-                className="rounded-xl object-contain"
-              />
-            )}
-            <h1 className={`text-xl font-semibold ${textColor}`}>{client.name}</h1>
-          </motion.div>
-
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.35, delay: 0.42 }}
-            className={`text-center text-sm mb-6 ${subTextColor}`}
-          >
-            처음 방문하셨네요.
-            <br />
-            {client.name}에 가입하고 서비스를 이용해보세요.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35, delay: 0.54 }}
-            className="flex flex-col gap-2"
-          >
-            <Button variant="primary" fullWidth loading={joining} disabled={canceling} onClick={handleJoin}>
-              가입하기
-            </Button>
-            <Button variant="ghost" fullWidth loading={canceling} disabled={joining} onClick={handleCancel}>
-              취소
-            </Button>
-          </motion.div>
-        </div>
+          서비스 시작하기
+        </Button>
+        <Button 
+          variant="ghost" 
+          fullWidth 
+          loading={canceling} 
+          disabled={joining} 
+          onClick={handleCancel}
+          className={`h-12 rounded-2xl font-semibold ${client.textDark ? 'text-gray-500' : 'text-white/70'}`}
+        >
+          다음에 할게요
+        </Button>
       </motion.div>
-    </main>
+    </PageLayout>
   );
 }
