@@ -55,102 +55,111 @@ export function LoginContent() {
 
   if (!client) return null;
 
-  const textColor = client.textDark ? 'text-gray-900' : 'text-white';
-  const subTextColor = client.textDark ? 'text-black/40' : 'text-white/50';
-  const dividerColor = client.textDark ? 'border-black/20' : 'border-white/30';
-
   return (
-    <main className="fixed inset-0 overflow-hidden">
-      <div
-        className="absolute inset-0"
-        style={{
-          background: `linear-gradient(135deg, ${client.gradientFrom}, ${client.gradientTo})`,
-        }}
-      />
-
+    <main className="fixed inset-0 overflow-hidden bg-gray-950">
+      {/* 배경 Orb 1 — 좌상단 */}
       <motion.div
         initial={{ opacity: 0 }}
-        animate={{ opacity: 0.55 }}
-        transition={{ duration: 1.4 }}
-        className="absolute -top-40 -left-40 w-[560px] h-[560px] rounded-full blur-3xl pointer-events-none"
+        animate={{ opacity: 0.6 }}
+        transition={{ duration: 1.6 }}
+        className="absolute -top-48 -left-48 w-[640px] h-[640px] rounded-full blur-[120px] pointer-events-none"
         style={{ backgroundColor: client.gradientFrom }}
       />
+
+      {/* 배경 Orb 2 — 우하단 */}
       <motion.div
         initial={{ opacity: 0 }}
-        animate={{ opacity: 0.55 }}
-        transition={{ duration: 1.4, delay: 0.1 }}
-        className="absolute -bottom-40 -right-40 w-[560px] h-[560px] rounded-full blur-3xl pointer-events-none"
+        animate={{ opacity: 0.5 }}
+        transition={{ duration: 1.6, delay: 0.15 }}
+        className="absolute -bottom-48 -right-48 w-[640px] h-[640px] rounded-full blur-[120px] pointer-events-none"
         style={{ backgroundColor: client.gradientTo }}
       />
+
+      {/* 배경 Orb 3 — 우상단 */}
       <motion.div
         initial={{ opacity: 0 }}
-        animate={{ opacity: 0.35 }}
-        transition={{ duration: 1.6, delay: 0.15 }}
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[480px] h-[480px] rounded-full blur-3xl pointer-events-none"
-        style={{
-          background: `radial-gradient(circle, ${client.gradientFrom}, ${client.gradientTo})`,
-        }}
+        animate={{ opacity: 0.3 }}
+        transition={{ duration: 1.8, delay: 0.25 }}
+        className="absolute -top-32 -right-32 w-[480px] h-[480px] rounded-full blur-[100px] pointer-events-none"
+        style={{ backgroundColor: client.gradientTo }}
       />
 
+      {/* 카드 */}
       <motion.div
-        initial={{ y: 64, opacity: 0 }}
+        initial={{ y: 72, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.52, delay: 0.28, ease: EASE_OUT_BACK }}
+        transition={{ duration: 0.55, delay: 0.28, ease: EASE_OUT_BACK }}
         className={[
-          'absolute backdrop-blur-xl',
+          'absolute backdrop-blur-2xl',
           'md:bottom-8 md:left-1/2 md:-translate-x-1/2 md:w-[360px] md:rounded-2xl',
           'max-md:bottom-0 max-md:left-0 max-md:right-0 max-md:rounded-t-2xl',
         ].join(' ')}
         style={{
-          backgroundColor: 'rgba(255, 255, 255, 0.15)',
-          border: '1px solid rgba(255, 255, 255, 0.25)',
+          backgroundColor: 'rgba(255,255,255,0.06)',
+          border: '1px solid rgba(255,255,255,0.1)',
         }}
       >
         <div
           className="px-6 pt-8"
-          style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))' }}
+          style={{ paddingBottom: 'max(2rem, env(safe-area-inset-bottom))' }}
         >
+          {/* 로고 링 + 프로젝트명 + 타이틀 */}
           <motion.div
-            initial={{ opacity: 0, y: 8 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.6 }}
-            className="flex flex-col items-center gap-3 mb-6"
+            className="flex flex-col items-center mb-7"
           >
-            {client.logoUrl && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={client.logoUrl}
-                alt={client.name}
-                width={56}
-                height={56}
-                className="rounded-xl object-contain"
-              />
-            )}
-            <h1 className={`text-xl font-semibold ${textColor}`}>{client.name}</h1>
+            {/* 그라데이션 링 */}
+            <div
+              className="w-16 h-16 rounded-full p-[2.5px] mb-3"
+              style={{
+                background: `linear-gradient(135deg, ${client.gradientFrom}, ${client.gradientTo})`,
+              }}
+            >
+              <div className="w-full h-full rounded-full bg-gray-950/70 flex items-center justify-center overflow-hidden">
+                {client.logoUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={client.logoUrl}
+                    alt={client.name}
+                    width={36}
+                    height={36}
+                    className="object-contain"
+                  />
+                ) : (
+                  <span
+                    className="text-lg font-bold"
+                    style={{
+                      background: `linear-gradient(135deg, ${client.gradientFrom}, ${client.gradientTo})`,
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                    }}
+                  >
+                    {client.name[0]}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* 프로젝트명 */}
+            <p className="text-xs text-white/40 mb-1">{client.name}</p>
+
+            {/* 타이틀 */}
+            <h1 className="text-2xl font-bold text-white">로그인</h1>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3, delay: 0.72 }}
-            className="flex items-center gap-3 mb-4"
-          >
-            <div className={`flex-1 border-t ${dividerColor}`} />
-            <span className={`text-xs ${subTextColor}`}>소셜 계정으로 로그인</span>
-            <div className={`flex-1 border-t ${dividerColor}`} />
-          </motion.div>
-
-          <div className="flex flex-col gap-3">
+          {/* 소셜 버튼 */}
+          <div className="flex flex-col gap-2.5">
             {PROVIDERS.map((provider, index) => (
               <motion.div
                 key={provider}
-                initial={{ opacity: 0, y: 12 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.35, delay: 0.81 + index * 0.09, ease: 'easeOut' }}
+                transition={{ duration: 0.3, delay: 0.72 + index * 0.08, ease: 'easeOut' }}
               >
                 <SocialLoginButton
                   provider={provider}
-                  textDark={client.textDark}
                   onClick={() => handleLogin(provider)}
                   disabled={!!loadingProvider}
                 />
@@ -158,15 +167,17 @@ export function LoginContent() {
             ))}
           </div>
 
+          {/* 푸터 */}
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3, delay: 1.08 }}
-            className={`mt-5 text-center text-xs ${subTextColor}`}
+            className="mt-5 text-center text-xs text-white/25"
           >
             로그인 시{' '}
-            <span className="underline underline-offset-2 cursor-pointer">이용약관</span> 및{' '}
-            <span className="underline underline-offset-2 cursor-pointer">개인정보처리방침</span>에
+            <span className="underline underline-offset-2 cursor-pointer text-white/40">이용약관</span>
+            {' '}및{' '}
+            <span className="underline underline-offset-2 cursor-pointer text-white/40">개인정보처리방침</span>에
             동의합니다.
           </motion.p>
         </div>
