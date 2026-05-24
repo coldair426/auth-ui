@@ -32,7 +32,8 @@ export default function CallbackPage() {
         setAccessToken(accessToken);
 
         if (needsJoin) {
-          router.replace(`/join?clientId=${encodeURIComponent(clientId)}`);
+          const joinParams = new URLSearchParams({ clientId, redirectUri, mode });
+          router.replace(`/join?${joinParams.toString()}`);
           return;
         }
 
