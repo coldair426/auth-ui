@@ -1,4 +1,4 @@
-import { Mode, OAuthClient, Provider, SocialAccount } from '@/types';
+import { OAuthClient, Provider, SocialAccount } from '@/types';
 import api from './instance';
 
 export function getConnections(): Promise<SocialAccount[]> {
@@ -13,6 +13,6 @@ export function disconnectSocial(provider: Provider): Promise<void> {
   return api.delete(`/account/connections/${provider}`).then(() => undefined);
 }
 
-export function getClientInfo(clientId: string): Promise<OAuthClient & { allowedModes: Mode[] }> {
-  return api.get('/oauth/client', { params: { clientId } }).then((res) => res.data);
+export function getClientInfo(clientId: string): Promise<OAuthClient> {
+  return api.get(`/clients/${clientId}`).then((res) => res.data);
 }

@@ -5,18 +5,13 @@ import { motion } from 'framer-motion';
 import { SocialLoginButton } from './SocialLoginButton';
 
 interface SocialLoginListProps {
-  textDark?: boolean;
   onLogin?: (provider: Provider) => void;
   disabled?: boolean;
 }
 
 const PROVIDERS: Provider[] = ['naver', 'kakao', 'google'];
 
-export function SocialLoginList({
-  textDark = false,
-  onLogin,
-  disabled = false,
-}: SocialLoginListProps) {
+export function SocialLoginList({ onLogin, disabled = false }: SocialLoginListProps) {
   return (
     <div className="flex flex-col gap-3">
       {PROVIDERS.map((provider, index) => (
@@ -28,7 +23,6 @@ export function SocialLoginList({
         >
           <SocialLoginButton
             provider={provider}
-            textDark={textDark}
             onClick={() => onLogin?.(provider)}
             disabled={disabled}
           />

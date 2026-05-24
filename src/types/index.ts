@@ -5,7 +5,7 @@ export type Mode = 'redirect' | 'popup';
 export interface OAuthClient {
   clientId: string;
   name: string;
-  logoUrl: string;
+  logoUrl: string | null;
   gradientFrom: string;
   gradientTo: string;
   textDark: boolean;

@@ -13,7 +13,7 @@ const providerConfig: Record<Provider, { label: string; icon: React.ReactNode }>
   naver: {
     label: '네이버로 로그인',
     icon: (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="#03C75A">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="#03C75A">
         <path d="M16.273 12.845L7.376 0H0v24h7.727V11.155L16.624 24H24V0h-7.727z" />
       </svg>
     ),
@@ -21,9 +21,14 @@ const providerConfig: Record<Provider, { label: string; icon: React.ReactNode }>
   kakao: {
     label: '카카오로 로그인',
     icon: (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="#3A1D1D">
-        <path d="M12 3C6.477 3 2 6.582 2 11c0 2.819 1.786 5.296 4.5 6.77L5.5 21l4.077-2.687C10.344 18.432 11.16 18.5 12 18.5c5.523 0 10-3.582 10-8S17.523 3 12 3z" />
-      </svg>
+      <span
+        className="flex items-center justify-center w-[18px] h-[18px] rounded-[4px]"
+        style={{ backgroundColor: '#FEE500' }}
+      >
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="#3C1E1E">
+          <path d="M12 3C6.477 3 2 6.582 2 11c0 2.819 1.786 5.296 4.5 6.77L5.5 21l4.077-2.687C10.344 18.432 11.16 18.5 12 18.5c5.523 0 10-3.582 10-8S17.523 3 12 3z" />
+        </svg>
+      </span>
     ),
   },
   google: {
@@ -76,7 +81,7 @@ export function SocialLoginButton({ provider, onClick, disabled = false }: Socia
           }}
         />
       ))}
-      <span className="relative z-10 flex-shrink-0 w-4 h-4 flex items-center justify-center">
+      <span className="relative z-10 flex-shrink-0 flex items-center justify-center">
         {config.icon}
       </span>
       <span className="relative z-10">{config.label}</span>
