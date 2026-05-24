@@ -1,6 +1,7 @@
 'use client';
 
 import { Provider } from '@/types';
+import { motion } from 'framer-motion';
 import { MouseEvent, useState } from 'react';
 
 interface SocialLoginButtonProps {
@@ -8,6 +9,12 @@ interface SocialLoginButtonProps {
   onClick?: () => void;
   disabled?: boolean;
 }
+
+const accentColors: Record<Provider, string> = {
+  naver: '#03C75A',
+  kakao: '#FEE500',
+  google: '#4285F4',
+};
 
 const providerConfig: Record<Provider, { label: string; icon: React.ReactNode }> = {
   naver: {
@@ -45,6 +52,7 @@ const providerConfig: Record<Provider, { label: string; icon: React.ReactNode }>
 };
 
 export function SocialLoginButton({ provider, onClick, disabled = false }: SocialLoginButtonProps) {
+  const [isHovered, setIsHovered] = useState(false);
   const [ripples, setRipples] = useState<{ x: number; y: number; id: number }[]>([]);
   const config = providerConfig[provider];
 
@@ -57,17 +65,30 @@ export function SocialLoginButton({ provider, onClick, disabled = false }: Socia
   }
 
   return (
-    <button
+    <motion.button
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      whileHover={{ x: 4 }}
+      transition={{ type: 'spring', stiffness: 400, damping: 30 }}
       onClick={handleClick}
       disabled={disabled}
-      className="relative w-full overflow-hidden flex items-center gap-3 text-sm font-medium text-gray-800 transition-colors duration-150 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer hover:bg-black/[0.1]"
+      className="relative w-full overflow-hidden flex items-center gap-3 text-sm font-medium text-gray-800 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer bg-black/[0.06] hover:bg-black/10 active:scale-[0.98]"
       style={{
-        backgroundColor: 'rgba(0,0,0,0.06)',
         border: '1px solid rgba(0,0,0,0.1)',
         borderRadius: '12px',
         padding: '12px 16px',
       }}
     >
+      {/* 브랜드 컬러 accent bar */}
+      <motion.span
+        initial={{ scaleY: 0, opacity: 0 }}
+        animate={{ scaleY: isHovered ? 1 : 0, opacity: isHovered ? 1 : 0 }}
+        transition={{ duration: 0.15 }}
+        className="absolute left-0 top-[20%] h-[60%] w-[3px] rounded-sm origin-center"
+        style={{ backgroundColor: accentColors[provider] }}
+      />
+
+      {/* ripple */}
       {ripples.map(({ x, y, id }) => (
         <span
           key={id}
@@ -84,16 +105,11 @@ export function SocialLoginButton({ provider, onClick, disabled = false }: Socia
         />
       ))}
 
-      {/* 아이콘 */}
       <span className="relative z-10 flex items-center justify-center w-[18px] flex-shrink-0">
         {config.icon}
       </span>
-
-      {/* 텍스트 */}
       <span className="relative z-10 flex-1 text-left">{config.label}</span>
-
-      {/* 화살표 */}
       <span className="relative z-10 text-black/25 text-base leading-none">→</span>
-    </button>
+    </motion.button>
   );
 }
