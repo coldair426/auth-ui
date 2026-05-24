@@ -70,7 +70,7 @@ export default function ConnectionsPage() {
     setActionLoading(provider);
     try {
       const { url } = await connectSocial(provider);
-      window.location.href = url;
+      window.location.assign(url);
     } catch {
       setActionLoading(null);
     }

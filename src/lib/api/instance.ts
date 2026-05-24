@@ -1,3 +1,4 @@
+import { useAuthStore } from '@/store/authStore';
 import axios from 'axios';
 
 const api = axios.create({
@@ -6,7 +7,6 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const { useAuthStore } = require('@/store/authStore');
   const accessToken = useAuthStore.getState().accessToken;
   if (accessToken) {
     config.headers.Authorization = `Bearer ${accessToken}`;
@@ -46,7 +46,6 @@ api.interceptors.response.use(
       );
 
       const newToken = data.accessToken;
-      const { useAuthStore } = require('@/store/authStore');
       useAuthStore.getState().setAccessToken(newToken);
 
       pendingRequests.forEach((cb) => cb(newToken));
@@ -56,7 +55,6 @@ api.interceptors.response.use(
       return api(originalRequest);
     } catch {
       pendingRequests = [];
-      const { useAuthStore } = require('@/store/authStore');
       useAuthStore.getState().clearAuth();
       return Promise.reject(error);
     } finally {
