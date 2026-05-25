@@ -27,20 +27,22 @@
   - 모든 요소는 개별적으로 튀지 않고 **"부드러운 상승(y:20) + 블러 페이드"**의 통일된 언어로 등장합니다.
   - 타이밍: `staggerChildren: 0.14s`, `ease: [0.22, 1, 0.36, 1]` (하이엔드 가속도 곡선)
 - **Dynamic Background (Dynamic Orbs)**:
-  - 4개 이상의 컬러 오브가 10~16초 주기로 화면을 크게 유영하며 회전/확장합니다. (`mix-blend-multiply` 활용)
+  - 4개 레이어(Amber, Orange, Indigo Purple, Cyan Teal)의 컬러 오브가 10~16초 주기로 화면을 크게 유영하며 회전/확장합니다. (`mix-blend-multiply`, `radial-gradient` 활용)
 - **Micro-interactions**: 
   - 로고: 6초 주기의 우아한 부유 애니메이션 (`y: [0, -8, 0]`).
   - 카드: 상시 가동되는 미세한 `Shimmer Flare` 효과로 유리 질감 강조.
 
 ### 3. 에셋 및 레이아웃 규격
-- **Vertical Spacing**: 요소 간 간격을 촘촘하게 배치하여 수직적인 밀도감을 높입니다. (Logo mb-8, Title mb-5 등)
+- **Vertical Spacing**: 요소 간 간격을 촘촘하게 배치하여 수직적인 밀도감을 높입니다. (Logo mb-8, Badge mb-6, Title mb-5 등)
 - **High-Fidelity Assets**: `logo.webp` (26x26 기준 확대) 사용.
 
 ---
 
 ## 📂 아키텍처 및 기술 설계
 - **Next.js 16 (App Router)**: 최신 컨벤션 준수.
+- **Server-Client Separation**: SEO 및 메타데이터 최적화를 위해 메인 페이지는 서버 컴포넌트(`page.tsx`)와 클라이언트 컴포넌트(`HomeContent.tsx`)로 분리하여 관리합니다.
 - **PageLayout Component**: `src/components/ui/PageLayout.tsx`는 배경 Orb 및 반응형 컨테이너 로직을 통합 관리합니다. 모든 페이지는 메인 페이지의 다이나믹 Orb 로직을 이식받아야 합니다.
+- **Security & CSP**: `src/proxy.ts`에서 네이버 공식 CDN(`hangeul.pstatic.net`)을 포함한 엄격한 콘텐츠 보안 정책을 관리합니다.
 
 ---
 
