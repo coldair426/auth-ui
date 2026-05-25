@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import url("https://hangeul.pstatic.net/hangeul_static/css/nanum-square-round.css");
 
 /* Tailwind 4: Enable class-based dark mode selector */
 @custom-variant dark (&:where(.dark, .dark *));
@@ -21,13 +22,6 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-nanum-round);
   --font-mono: var(--font-nanum-round);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #050505;
-    --foreground: #fafafa;
-  }
 }
 
 body {
