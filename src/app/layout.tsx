@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { Viewport } from "next";
 import "./globals.css";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -25,7 +26,10 @@ export default function RootLayout({
       lang="ko"
       className="h-full antialiased"
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {children}
+        <ThemeToggle />
+      </body>
     </html>
   );
 }
