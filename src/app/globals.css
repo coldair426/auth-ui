@@ -1,5 +1,5 @@
-@import "tailwindcss";
 @import url("https://hangeul.pstatic.net/hangeul_static/css/nanum-square-round.css");
+@import "tailwindcss";
 
 /* Tailwind 4: Enable class-based dark mode selector */
 @custom-variant dark (&:where(.dark, .dark *));
