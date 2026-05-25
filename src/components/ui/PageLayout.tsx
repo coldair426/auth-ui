@@ -123,12 +123,7 @@ export function PageLayout({
             className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 dark:via-white/10 to-transparent pointer-events-none z-[11]"
           />
 
-          {/* 모바일 핸들 */}
-          <div className="md:hidden flex justify-center pt-4 mb-2">
-            <div className="w-12 h-1.5 rounded-full bg-black/10 dark:bg-white/10" />
-          </div>
-
-          <div className="px-8 pt-8 md:pt-12 pb-12 md:pb-14">
+          <div className="px-8 pt-12 pb-12 md:pb-14">
             {children}
           </div>
         </motion.div>
