@@ -104,9 +104,9 @@ export function SocialLoginButton({
     <motion.button
       onMouseEnter={() => !isLoading && !isDimmed && setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      whileHover={!isLoading && !isDimmed ? { x: 3 } : {}}
-      whileTap={!isLoading && !isDimmed ? { scale: 0.97 } : {}}
-      transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+      whileHover={!isLoading && !isDimmed ? { scale: 1.015, x: 2 } : {}}
+      whileTap={!isLoading && !isDimmed ? { scale: 0.985 } : {}}
+      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
       onClick={handleClick}
       disabled={disabled || isLoading || isDimmed}
       aria-label={config.ariaLabel}

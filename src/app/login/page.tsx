@@ -15,27 +15,27 @@ export async function generateMetadata(
 
   if (!clientId) {
     return {
-      title: 'Unified Auth',
-      description: 'Please provide a valid client ID to sign in.',
+      title: '빵돌이 통합 인증',
+      description: '서비스 연결을 위해 올바른 링크로 접속해주세요.',
     };
   }
 
   try {
     const client = await getClientInfo(clientId);
     return {
-      title: `${client.name} - Login`,
-      description: `${client.name} authentication service.`,
+      title: `${client.name} - 빵돌이 통합 인증`,
+      description: `${client.name} 서비스를 위한 인증 화면입니다.`,
       openGraph: {
-        title: `${client.name} - Login`,
-        description: `${client.name} authentication service.`,
+        title: `${client.name} - 빵돌이 통합 인증`,
+        description: `${client.name} 서비스를 위한 인증 화면입니다.`,
         images: client.logoUrl ? [client.logoUrl] : [],
       },
       icons: client.logoUrl ? { icon: client.logoUrl } : undefined,
     };
   } catch {
     return {
-      title: 'Unified Auth',
-      description: 'Authentication service.',
+      title: '빵돌이 통합 인증',
+      description: '인증 서비스입니다.',
     };
   }
 }

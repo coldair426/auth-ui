@@ -1,19 +1,17 @@
-# Unified Auth UI
+# 빵돌이 통합 인증 (Breadkun Integrated Authentication)
 
 여러 서비스에서 공유하여 사용하는 **범용 통합 인증 UI 서비스**입니다.  
 `clientId`를 기반으로 각 프로젝트의 브랜딩(로고, 컬러, 제목 등)을 동적으로 반영하며, 심리학 및 UX 원칙에 기반한 프리미엄 사용자 경험을 제공합니다.
 
 ---
 
-## 🎨 디자인 및 UX 철학 (Design Principles)
+## 🎨 디자인 및 브랜딩 (Branding)
 
-본 프로젝트는 단순한 기능을 넘어, 사용자의 인지 부하를 줄이고 신뢰감을 주는 **Premium Minimalist** 디자인을 지향합니다.
+본 프로젝트는 **"Breadkun (빵돌이)"**의 정체성을 담은 **Premium Minimalist** 디자인을 지향합니다.
 
-- **인지 심리학 기반**: 게슈탈트 법칙을 활용한 소셜 버튼 그룹화와 브랜드별 파스텔 틴트(Option B) 적용으로 0.1초 이내의 직관적 인지를 돕습니다.
-- **유니버설 디자인**: 에러 상황에서도 명확한 탈출구(CTA)를 제공하며, 고대비 버튼 설정을 통해 누구나 쉽게 조작할 수 있도록 설계되었습니다.
-- **마이크로 인터랙션**: Framer Motion의 물리 엔진(Spring)을 활용한 부드러운 입장/퇴장 애니메이션과 버튼 클릭 피드백으로 조작의 즐거움을 제공합니다.
-- **다크 모드 최적화**: OS 설정에 따른 자동 테마 전환과 다크 모드 전용 브랜드 틴트 컬러를 지원하여 모든 환경에서 일관된 경험을 제공합니다.
-- **동적 브랜딩**: 하나의 시스템이지만, 접속한 `clientId`에 따라 로고, 배경 그라데이션, 브라우저 탭 이름, 파비콘까지 실시간으로 변화합니다.
+- **브랜드 컬러**: 따뜻한 빵의 질감을 담은 Amber/Orange 그라데이션 (`#D97706` → `#F59E0B`)을 메인 테마로 사용합니다.
+- **에셋 최적화**: 고화질 `logo.webp`를 사용하여 로딩 속도와 선명도를 모두 확보했습니다.
+- **글래스모피즘**: Framer Motion과 Tailwind CSS 4를 활용하여 부드러운 `backdrop-blur` 효과를 적용했습니다. 특히 모바일 환경에서는 배경 요소와의 간섭을 고려하여 투명도를 동적으로 최적화하여 일관된 가독성을 제공합니다.
 
 ---
 
@@ -24,7 +22,7 @@
 ### 1. 인증 요청 (Redirect)
 클라이언트 서비스는 사용자를 아래 URL로 리다이렉트 시킵니다.
 ```
-https://auth.yourdomain.com/login?clientId={MY_CLIENT_ID}&redirectUri={MY_REDIRECT_URI}&mode=redirect
+https://auth.breadkun.com/login?clientId={MY_CLIENT_ID}&redirectUri={MY_REDIRECT_URI}&mode=redirect
 ```
 - **clientId**: 프로젝트 식별자 (로고 및 테마 결정)
 - **redirectUri**: 인증 완료 후 돌아갈 주소
@@ -41,17 +39,13 @@ https://auth.yourdomain.com/login?clientId={MY_CLIENT_ID}&redirectUri={MY_REDIRE
 - 신규 유저인 경우 가입 동의 페이지(`/join`)로 이동합니다.
 - 기존 유저이거나 가입 완료 시 JWT 토큰이 발급됩니다.
 
-### 4. 토큰 전달 및 귀환
-설정된 `mode`에 따라 클라이언트 서비스로 토큰을 전달합니다.
-- **Redirect 모드**: `redirectUri`로 이동하며 쿼리 파라미터로 토큰을 전달합니다.
-- **Popup 모드**: `window.opener.postMessage`를 통해 토큰을 전달하고 팝업을 닫습니다.
-
 ---
 
 ## 📱 주요 페이지 및 기능
 
 | 경로 | 설명 | 동적 변경 요소 |
 |------|------|------|
+| `/` | 메인 랜딩 페이지 | 데모 로그인 및 서비스 소개 |
 | `/login` | 메인 로그인 화면 | 로고, 그라데이션, 타이틀, 파비콘 |
 | `/join` | 서비스 가입 동의 | 로고, 브랜드 테마, 서비스 명칭 |
 | `/settings/connections` | 소셜 계정 연동 관리 | 사용자 정보 및 연결된 소셜 계정 |
@@ -63,14 +57,13 @@ https://auth.yourdomain.com/login?clientId={MY_CLIENT_ID}&redirectUri={MY_REDIRE
 - **Framework**: Next.js 16 (App Router / Turbopack)
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS 4, Framer Motion
-- **State**: Zustand
+- **State Management**: Zustand
 - **API**: Axios (Interceptors for Token Refresh)
-- **Security**: Strict CSP, X-Frame-Options (Clickjacking Protection)
-- **Accessibility**: ARIA labels compliant
+- **Performance**: WebP format assets, Metadata optimization
 
 ---
 
-## 🚀 로컬 실행 및 개발 가이드
+## 🚀 로컬 실행 가이드
 
 ```bash
 # 1. 의존성 설치
@@ -82,9 +75,3 @@ cp .env.example .env.local
 # 3. 개발 서버 실행
 yarn dev
 ```
-
-### 개발 편의를 위한 우회 전략 (Local Bypass)
-빅테크 개발 문화를 반영하여, 로컬 환경(`development`)에서는 백엔드 서버 없이도 UI 개발이 가능하도록 아래 기능이 활성화되어 있습니다.
-- **Auth Bypass**: 토큰이 없어도 `/settings` 등 인증 페이지 접근 가능.
-- **API Fallback**: API 호출 실패 시 자동으로 Mock 데이터를 로드하여 UI 레이아웃 확인 가능.
-- **Security Bypass**: 로컬 테스트를 방해하는 CSP 정책 등이 개발 모드에서는 자동 해제됨.

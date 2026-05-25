@@ -18,8 +18,8 @@ export function PageLayout({
   isExiting = false,
   isLoading = false,
   isInvalid = false,
-  from = '#4F46E5',
-  to = '#7C3AED',
+  from = '#D97706',
+  to = '#F59E0B',
   width = 360,
 }: PageLayoutProps) {
   return (
@@ -88,7 +88,7 @@ export function PageLayout({
             damping: 28,
             delay: 0.3,
           }}
-          className="w-full md:max-w-[420px] rounded-[32px] backdrop-blur-2xl bg-white/55 dark:bg-zinc-900/60 border border-white/70 dark:border-white/10 shadow-2xl relative z-10 overflow-hidden"
+          className="w-full md:max-w-[420px] rounded-[40px] backdrop-blur-3xl bg-white/70 md:bg-white/40 dark:bg-zinc-900/70 md:dark:bg-zinc-900/50 border border-white/60 dark:border-white/10 shadow-2xl relative z-10 overflow-hidden"
           style={{ width: `min(100%, ${width}px)` }}
         >
           {/* 모바일 핸들 (Grabber) */}
@@ -97,8 +97,8 @@ export function PageLayout({
           </div>
 
           <div
-            className="px-7 pt-5 md:pt-8"
-            style={{ paddingBottom: 'max(2rem, env(safe-area-inset-bottom))' }}
+            className="px-8 pt-6 md:pt-10"
+            style={{ paddingBottom: 'max(2.5rem, env(safe-area-inset-bottom))' }}
           >
             {children}
           </div>

@@ -14,10 +14,10 @@ const PROVIDERS: Provider[] = ['naver', 'kakao', 'google'];
 
 const FALLBACK_CLIENT: OAuthClient = {
   clientId: '',
-  name: 'Unified Auth',
-  logoUrl: null,
-  gradientFrom: '#4F46E5',
-  gradientTo: '#7C3AED',
+  name: '빵돌이 통합 인증',
+  logoUrl: '/logo.webp',
+  gradientFrom: '#D97706',
+  gradientTo: '#F59E0B',
   textDark: false,
   allowedModes: ['redirect', 'popup'],
 };
@@ -116,16 +116,28 @@ export function LoginContent() {
       to={client.gradientTo}
       width={360}
     >
-      {/* ── 로딩 상태 (Skeleton UI) ── */}
+      {/* ── 로딩 상태 (Skeleton UI: 인지 부하 최소화) ── */}
       {clientStatus === 'loading' && !isInvalid && (
-        <div className="flex flex-col items-center animate-pulse">
-          <div className="w-16 h-16 rounded-[22px] bg-black/5 dark:bg-white/5 mb-4" />
-          <div className="h-4 w-20 bg-black/5 dark:bg-white/5 rounded-full mb-2" />
-          <div className="h-8 w-32 bg-black/5 dark:bg-white/5 rounded-full mb-8" />
-          <div className="w-full h-px bg-black/5 dark:bg-white/5 mb-5" />
-          <div className="flex flex-col gap-3 w-full mb-6">
+        <div className="flex flex-col items-center">
+          <motion.div 
+            initial={{ opacity: 0.5 }}
+            animate={{ opacity: [0.5, 0.8, 0.5] }}
+            transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+            className="w-16 h-16 rounded-[22px] bg-black/[0.06] dark:bg-white/[0.06] mb-6" 
+          />
+          <div className="space-y-3 w-full flex flex-col items-center mb-8">
+            <div className="h-4 w-24 bg-black/[0.04] dark:bg-white/[0.04] rounded-full" />
+            <div className="h-8 w-40 bg-black/[0.06] dark:bg-white/[0.06] rounded-xl" />
+          </div>
+          <div className="flex flex-col gap-3 w-full">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="w-full h-14 rounded-2xl bg-black/5 dark:bg-white/5" />
+              <div key={i} className="w-full h-14 rounded-2xl bg-black/[0.03] dark:bg-white/[0.03] relative overflow-hidden">
+                <motion.div 
+                  animate={{ x: ['-100%', '100%'] }}
+                  transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 dark:via-white/5 to-transparent"
+                />
+              </div>
             ))}
           </div>
         </div>

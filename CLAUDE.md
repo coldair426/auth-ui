@@ -1,1 +1,0 @@
-All coding conventions, architecture guidelines, and project rules are defined in the `AI_RULES.md` file located in the root directory. You MUST read `AI_RULES.md` first before generating or modifying any code, and strictly adhere to its instructions.
