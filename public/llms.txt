@@ -1,0 +1,25 @@
+# BREADKUN Unified Authentication
+
+Integrated Authentication (SSO) service for the BREADKUN ecosystem and partner projects.
+
+## Core Features
+- **One Account, Every Access**: Sign in once and use all connected services without additional registration.
+- **Dynamic Branding**: Real-time UI theme and logo synchronization based on the client application.
+- **High Security**: OAuth 2.0 / OpenID Connect based secure authentication flows.
+- **Premium UI**: Cinematic glassmorphism design with optimized user experience.
+
+## Key Links
+- [Main Landing Page](https://auth.breadkun.com/)
+- [Login Service](https://auth.breadkun.com/login)
+- [Member Registration](https://auth.breadkun.com/join)
+- [Account Connections](https://auth.breadkun.com/settings/connections)
+
+## Technical Stack
+- Next.js 16 (App Router)
+- Framer Motion
+- Tailwind CSS 4
+- OpenID Connect / JWT
+
+## Contact & Support
+- Website: [breadkun.com](https://breadkun.com)
+- Developer: Breadkun Corporation

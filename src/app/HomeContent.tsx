@@ -10,6 +10,30 @@ export default function HomeContent() {
 
   return (
     <main className="fixed inset-0 overflow-hidden bg-[#fdfdfd] dark:bg-[#050505] transition-colors duration-1000 flex items-center justify-center p-6">
+      {/* JSON-LD for AI SEO (GEO) */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "SoftwareApplication",
+            "name": "빵돌이 통합 인증",
+            "operatingSystem": "Web",
+            "applicationCategory": "SecurityApplication",
+            "description": "어디서나 간편하게, 당신의 계정을 하나로 통합하세요. 빵돌이 통합 인증은 안전하고 빠른 로그인을 지원합니다.",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "KRW"
+            },
+            "author": {
+              "@type": "Organization",
+              "name": "Breadkun Corporation",
+              "url": "https://breadkun.com"
+            }
+          })
+        }}
+      />
       {/* Cinematic Grain Overlay */}
       <div className="absolute inset-0 z-[1] pointer-events-none opacity-[0.03] dark:opacity-[0.05] bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
 
