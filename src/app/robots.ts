@@ -1,10 +1,10 @@
-import { Metadata } from 'next';
+import { MetadataRoute } from 'next';
 
 /**
  * robots.txt 생성기
  * 검색 엔진 봇의 접근 권한을 설정합니다.
  */
-export default function robots(): Metadata {
+export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
       userAgent: '*',

@@ -7,6 +7,8 @@ interface PageLayoutProps {
   children: ReactNode;
   footer?: ReactNode;
   isExiting?: boolean;
+  isLoading?: boolean;
+  isInvalid?: boolean;
   from?: string;
   to?: string;
   width?: number;
@@ -16,6 +18,8 @@ export function PageLayout({
   children,
   footer,
   isExiting = false,
+  isLoading = false,
+  isInvalid = false,
   from = '#D97706',
   to = '#F59E0B',
   width = 360,

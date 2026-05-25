@@ -24,10 +24,69 @@ export function JoinContent() {
   const [canceling, setCanceling] = useState(false);
 
   useEffect(() => {
-    // ... (clientId validation and fetch logic remains same)
+    if (!clientId) {
+      router.replace('/error?code=INVALID_CLIENT');
+      return;
+    }
+    if (storedClientInfo) return;
+
+    getClientInfo(clientId)
+      .then((info) => {
+        setClient(info);
+        setClientInfo(info);
+      })
+      .catch(() => {
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('[Dev Mock] 서비스 정보 API 호출 실패: 테스트 데이터를 로드합니다.');
+          const mockClient: OAuthClient = {
+            clientId,
+            name: 'Unified Auth',
+            logoUrl: null,
+            gradientFrom: '#4F46E5',
+            gradientTo: '#7C3AED',
+            textDark: false,
+            allowedModes: ['redirect', 'popup'],
+          };
+          setClient(mockClient);
+          setClientInfo(mockClient);
+          return;
+        }
+        router.replace('/error?code=INVALID_CLIENT');
+      });
   }, [clientId, router, storedClientInfo, setClientInfo]);
 
-  // (handleComplete, handleJoin, handleCancel remain same)
+  function handleComplete(accessToken: string) {
+    if (mode === 'popup') {
+      const targetOrigin = redirectUri ? new URL(redirectUri).origin : '*';
+      window.opener?.postMessage({ type: 'AUTH_SUCCESS', accessToken }, targetOrigin);
+      window.close();
+      return;
+    }
+    window.location.assign(redirectUri);
+  }
+
+  async function handleJoin() {
+    if (!clientId || joining) return;
+    setJoining(true);
+    try {
+      await joinProject(clientId);
+      const { accessToken } = useAuthStore.getState();
+      handleComplete(accessToken ?? '');
+    } catch {
+      router.replace('/error?code=JOIN_FAILED');
+    } finally {
+      setJoining(false);
+    }
+  }
+
+  function handleCancel() {
+    setCanceling(true);
+    if (mode === 'popup') {
+      window.close();
+      return;
+    }
+    window.location.assign(redirectUri);
+  }
 
   if (!client) return null;
 
