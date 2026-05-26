@@ -127,7 +127,7 @@ export function JoinContent() {
             }}
             className="text-[14px] font-semibold text-black/40 dark:text-zinc-400 mt-1"
           >
-            빵돌이 통합 계정으로 연동
+            빵돌이 통합 계정으로 가입
           </motion.p>
         </div>
 
@@ -178,7 +178,7 @@ export function JoinContent() {
               boxShadow: `0 12px 24px -8px ${client.gradientFrom}60`
             }}
           >
-            {client.name} 시작하기
+            동의하고 {client.name} 시작하기
           </Button>
           <Button 
             variant="ghost" 
