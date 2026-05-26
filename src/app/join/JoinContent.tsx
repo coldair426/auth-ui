@@ -123,7 +123,7 @@ export function JoinContent() {
             }}
             className="text-[14px] font-semibold text-black/40 dark:text-zinc-400 mt-1"
           >
-            빵돌이 통합 계정으로 가입
+            빵돌이 통합 인증 계정으로 가입
           </motion.p>
         </div>
 

@@ -25,12 +25,12 @@ export async function generateMetadata(
   try {
     const client = await getClientInfo(clientId);
     return {
-      title: `${client.name} - 빵돌이 통합 인증`,
+      title: `${client.name} | 빵돌이 통합 인증`,
       description: isDev 
         ? `[개발 모드] ${client.name} UI를 확인 중입니다.`
         : `${client.name} 서비스를 위한 인증 화면입니다.`,
       openGraph: {
-        title: `${client.name} - 빵돌이 통합 인증`,
+        title: `${client.name} | 빵돌이 통합 인증`,
         description: `${client.name} 서비스를 위한 인증 화면입니다.`,
         images: client.logoUrl ? [client.logoUrl] : [],
       },

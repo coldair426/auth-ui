@@ -180,7 +180,7 @@ export function LoginContent() {
           <motion.button 
             whileHover={{ scale: 1.02, backgroundColor: '#1f2937' }}
             whileTap={{ scale: 0.97 }}
-            onClick={() => window.history.back()}
+            onClick={() => globalThis.history.back()}
             className="w-full h-14 bg-gray-900 dark:bg-zinc-100 text-white dark:text-black rounded-2xl text-[15px] font-bold tracking-tight shadow-md transition-all cursor-pointer flex items-center justify-center"
             aria-label="이전 페이지로 돌아가기"
           >
@@ -215,7 +215,7 @@ export function LoginContent() {
               transition={{ duration: 0.5, delay: 1 }}
               className="text-[14px] font-semibold text-black/40 dark:text-zinc-400 mt-1"
             >
-              빵돌이 통합 계정으로 로그인
+              빵돌이 통합 인증 계정으로 로그인
             </motion.p>
           </div>
           
@@ -236,8 +236,7 @@ export function LoginContent() {
             로그인 시 빵돌이 통합{' '}
             <span className="hover:text-black/60 dark:hover:text-zinc-300 transition-colors cursor-pointer underline underline-offset-4 decoration-black/10 dark:decoration-white/10">이용약관</span>
             {' 및 '}
-            <span className="hover:text-black/60 dark:hover:text-zinc-300 transition-colors cursor-pointer underline underline-offset-4 decoration-black/10 dark:decoration-white/10">개인정보처리방침</span>
-            에 동의하게 됩니다.
+            <span className="hover:text-black/60 dark:hover:text-zinc-300 transition-colors cursor-pointer underline underline-offset-4 decoration-black/10 dark:decoration-white/10">개인정보처리방침</span>에 동의하게 됩니다.
           </motion.div>
         </>
       )}
