@@ -39,13 +39,19 @@ api.interceptors.response.use(
     isRefreshing = true;
 
     try {
-      const { data } = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/refresh`,
-        {},
-        { withCredentials: true },
-      );
+      let newToken = '';
 
-      const newToken = data.accessToken;
+      if (process.env.NODE_ENV === 'development') {
+        newToken = 'mock_refreshed_access_token';
+      } else {
+        const { data } = await axios.post(
+          `${process.env.NEXT_PUBLIC_API_URL}/auth/refresh`,
+          {},
+          { withCredentials: true },
+        );
+        newToken = data.accessToken;
+      }
+
       useAuthStore.getState().setAccessToken(newToken);
 
       pendingRequests.forEach((cb) => cb(newToken));

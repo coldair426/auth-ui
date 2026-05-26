@@ -15,8 +15,10 @@
     - Light: `bg-[#fdfdfd]` (미색) / `text-[#2D2319]` (Charcoal Brown)
     - Dark: `bg-[#050505]` (Deep Black) / `text-zinc-50` (White)
   - **Surface (Cards/Signboards)**:
-    - Light: `bg-white/70 border-white/80 shadow-[rgba(217,119,6,0.1)]`
-    - Dark: `bg-zinc-900/80 border-white/10 shadow-[rgba(0,0,0,0.4)]`
+    - Light: `bg-white/75 border-black/10 shadow-2xl` (고대비 및 깊은 그림자로 배경과 명확히 구분)
+    - Dark: `bg-zinc-900/90 border-white/[0.08] shadow-2xl` (고농도 배경 및 초미세 화이트 테두리)
+    - **Soft Glow (Dark Mode)**: 다크 모드에서는 테두리가 튀지 않도록 `1px`의 극저농도 컬러 아웃라인(`outline: 1px solid {brandColor}15`)을 사용하여 배경의 빛이 카드 가장자리에 스며든 듯한 효과를 부여합니다.
+- **Card Standard Width**: 메인, 로그인, 회원가입 등 모든 주요 카드의 폭은 **400px**로 통합하여 데스크탑에서의 안정감과 모바일 가독성을 동시에 확보합니다.
 - **Theme System (3-Way Mode)**:
   - **Auto (System)**, **Light**, **Dark** 3가지 모드를 지원합니다.
   - 전역 테마 상태는 `html` 클래스의 `.dark` 존재 여부로 결정되며, `localStorage`에 `theme` 키로 저장됩니다.
@@ -31,7 +33,8 @@
 
 ### 2. 표준 UI 구성 요소 (Standard UI Components)
 모든 새로운 페이지는 아래의 공통 컴포넌트를 사용하여 톤앤매너를 유지해야 합니다.
-- **PageLayout**: 배경 Orb 애니메이션, ToastContainer, ThemeToggle이 내장된 표준 레이아웃 컨테이너.
+- **PageLayout**: 배경 Orb 애니메이션, ToastContainer, ThemeToggle, 그리고 **Soft Glow 카드 시스템**이 내장된 표준 레이아웃 컨테이너.
+- **ClientLogo**: 클라이언트 브랜드 로고를 '프레임리스(Frameless)' 스타일로 렌더링하는 시네마틱 컴포넌트. 컬러 블룸 효과와 유영 애니메이션을 포함하며, `size` 조정을 통해 위계를 관리합니다. (Login: 112px, Join: 112px 권장)
 - **Typography (`Heading`, `Description`, `Badge`)**: 표준 폰트 크기, 자간(`-0.04em`), 색상 및 등장 애니메이션이 적용된 텍스트 컴포넌트.
 - **Icons**: 서비스 전역에서 사용되는 2.5px 선 굵기의 표준 SVG 아이콘 라이브러리.
 - **Toast**: 화면 하단 중앙(`bottom-12`)에 나타나는 비침습적 알림 시스템.
@@ -58,7 +61,12 @@
 
 ## 📂 아키텍처 및 기술 설계
 - **Next.js 16 (App Router)**: 최신 컨벤션 준수.
-- **Mocking Strategy**: `src/lib/api/mock.ts`를 통해 로컬 환경의 독립적인 테스트 데이터를 관리하며, `NODE_ENV` 조건절을 통해 배포 환경과 완벽히 격리합니다. 모든 주요 페이지(`/login`, `/join`, `/callback`, `/error`)는 로컬 개발 시 `MOCK_CLIENT_ID`를 폴백으로 사용하여 백엔드 없이도 전체 인증 플로우를 테스트할 수 있어야 합니다.
+- **Unified API & Mock Strategy (Strict Standard)**: 
+  - 모든 API 호출 함수(`src/lib/api/*.ts`)는 실제 API 로직과 Mock 로직을 하나의 함수 내에서 통합 관리해야 합니다.
+  - **Environment Branching**: `if (process.env.NODE_ENV === 'development')` 조건절을 사용하여 개발 환경에서는 `src/lib/api/mock.ts`의 데이터를 반환하고, 운영 환경에서는 실제 `api` 인스턴스를 사용합니다.
+  - **Zero-Manual-Switching**: 환경 변수나 코드의 수동 변경 없이, 빌드 환경에 따라 자동으로 동작을 전환하는 것을 원칙으로 합니다.
+  - **Metadata Integration**: 페이지의 `generateMetadata` 또한 공통 API 함수를 사용하여 UI와 브라우저 탭 정보(제목, 파비콘)가 항상 Mock 데이터와 동기화되도록 합니다.
+- **Mocking Data**: `src/lib/api/mock.ts`는 시스템의 유일한 가짜 데이터 소스(Single Source of Truth)이며, 로컬 개발 시 백엔드 없이도 전체 인증 플로우(로그인, 회원가입, 토큰 갱신)를 완벽히 재현할 수 있어야 합니다.
 - **PageLayout Component**: `src/components/ui/PageLayout.tsx`는 배경, 자동 대비 로직, 컨테이너를 통합 관리합니다.
 - **Toast System**: `src/components/ui/Toast.tsx`를 통한 전역 상태 비의존적 알림 처리.
 

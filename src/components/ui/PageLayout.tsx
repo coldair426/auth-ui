@@ -110,10 +110,14 @@ export function PageLayout({
             ease: [0.22, 1, 0.36, 1],
             delay: 0.2,
           }}
-          className="relative w-full rounded-[64px] backdrop-blur-[50px] bg-white/70 md:bg-white/45 dark:bg-zinc-900/80 md:dark:bg-zinc-900/50 border border-white/80 dark:border-white/10 overflow-hidden"
+          className="relative w-full rounded-[64px] backdrop-blur-[50px] bg-white/75 md:bg-white/45 dark:bg-zinc-900/90 md:dark:bg-zinc-900/70 border border-black/10 dark:border-white/[0.08] overflow-hidden shadow-2xl"
           style={{ 
             width: `min(100%, ${width}px)`,
-            boxShadow: `0 50px 100px -20px ${from}25`
+            boxShadow: isBackgroundLight 
+              ? `0 40px 80px -20px rgba(0,0,0,0.08)` 
+              : `0 50px 100px -20px ${from}25`,
+            outline: !isBackgroundLight ? `1px solid ${from}15` : 'none',
+            outlineOffset: '-1px'
           }}
         >
           {/* Shimmer Flare */}

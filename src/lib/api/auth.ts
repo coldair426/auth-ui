@@ -41,9 +41,15 @@ export function joinProject(clientId: string): Promise<void> {
 }
 
 export function logout(): Promise<void> {
+  if (process.env.NODE_ENV === 'development') {
+    return Promise.resolve();
+  }
   return api.post('/auth/logout').then(() => undefined);
 }
 
 export function refreshToken(): Promise<{ accessToken: string }> {
+  if (process.env.NODE_ENV === 'development') {
+    return Promise.resolve({ accessToken: 'mock_refreshed_access_token' });
+  }
   return api.post('/auth/refresh').then((res) => res.data);
 }

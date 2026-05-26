@@ -1,6 +1,7 @@
 'use client';
 
 import { SocialLoginButton } from '@/components/auth/SocialLoginButton';
+import { ClientLogo } from '@/components/ui/ClientLogo';
 import { PageLayout } from '@/components/ui/PageLayout';
 import { getClientInfo } from '@/lib/api/account';
 import { getSocialLoginUrl } from '@/lib/api/auth';
@@ -104,7 +105,7 @@ export function LoginContent() {
       isInvalid={isInvalid}
       from={client.gradientFrom}
       to={client.gradientTo}
-      width={360}
+      width={400}
     >
       {/* ── 로딩 상태 (Skeleton UI: 인지 부하 최소화) ── */}
       {clientStatus === 'loading' && !isInvalid && (
@@ -193,47 +194,51 @@ export function LoginContent() {
       {/* ── 정상 상태 ── */}
       {clientStatus === 'loaded' && !isInvalid && (
         <>
-          <div className="flex flex-col items-center mb-6">
-            <motion.div
-              initial={{ scale: 0, rotate: -15 }}
-              animate={{ scale: [0, 1.1, 1], rotate: 0 }}
-              transition={{ scale: { duration: 0.5, times: [0, 0.7, 1], ease: "easeOut", delay: 0.7 }, rotate: { type: 'spring', stiffness: 300, damping: 20, delay: 0.7 } }}
-              className="w-16 h-16 rounded-[22px] flex items-center justify-center mb-4 overflow-hidden relative shadow-xl shadow-black/5"
-              style={{ background: `linear-gradient(135deg, ${client.gradientFrom}, ${client.gradientTo})` }}
+          <div className="flex flex-col items-center mb-8">
+            <ClientLogo 
+              logoUrl={client.logoUrl} 
+              name={client.name} 
+              gradientFrom={client.gradientFrom} 
+              gradientTo={client.gradientTo}
+              size={112}
+              className="mb-2"
+            />
+            <motion.h1 
+              initial={{ opacity: 0, y: 8 }} 
+              animate={{ opacity: 1, y: 0 }} 
+              transition={{ duration: 0.5, delay: 0.9 }} 
+              className="text-[28px] font-extrabold text-gray-900 dark:text-white tracking-tight text-center"
             >
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
-                className="absolute inset-[-50%] pointer-events-none"
-                style={{ background: `conic-gradient(from 0deg, transparent 60%, rgba(255,255,255,0.3) 80%, transparent 100%)` }}
-              />
-              {client.logoUrl ? (
-                <img src={client.logoUrl} alt={client.name} width={38} height={38} className="object-contain relative z-10 drop-shadow-sm" />
-              ) : (
-                <span className="text-white text-2xl font-black relative z-10 tracking-tight">{client.name[0]}</span>
-              )}
-            </motion.div>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4, delay: 0.85 }} className="px-2.5 py-0.5 rounded-full bg-black/[0.04] dark:bg-white/5 mb-2 border border-black/[0.03] dark:border-white/5">
-              <p className="text-[10px] font-bold text-black/40 dark:text-white/40 tracking-widest uppercase">{client.name}</p>
-            </motion.div>
-            <motion.h1 initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.9 }} className="text-[26px] font-black text-gray-900 dark:text-zinc-100 tracking-tight">반가워요!</motion.h1>
+              {client.name}
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 1.0 }}
+              className="text-[14px] font-semibold text-black/40 dark:text-zinc-400 mt-1"
+            >
+              빵돌이 통합 계정으로 로그인
+            </motion.p>
           </div>
           
-          <motion.div initial={{ opacity: 0, scaleX: 0 }} animate={{ opacity: 1, scaleX: 1 }} transition={{ duration: 0.3, delay: 0.95 }} className="h-px bg-gradient-to-r from-transparent via-black/[0.08] dark:via-white/10 to-transparent mb-5" />
-          
-          <div className="flex flex-col gap-3 mb-6">
+          <div className="flex flex-col gap-3 mb-8">
             {PROVIDERS.map((provider, index) => (
-              <motion.div key={provider} initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4, delay: 1.05 + index * 0.08 }}>
+              <motion.div key={provider} initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4, delay: 1.1 + index * 0.08 }}>
                 <SocialLoginButton provider={provider} onClick={() => handleLogin(provider)} disabled={!!loadingProvider} isLoading={loadingProvider === provider} isDimmed={!!loadingProvider && loadingProvider !== provider} />
               </motion.div>
             ))}
           </div>
 
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4, delay: 1.4 }} className="text-center text-[11px] font-medium text-black/25 dark:text-white/20 flex items-center justify-center gap-1.5">
+          <motion.div 
+            initial={{ opacity: 0 }} 
+            animate={{ opacity: 1 }} 
+            transition={{ duration: 0.4, delay: 1.5 }} 
+            className="text-center text-[11px] leading-relaxed font-semibold text-black/30 dark:text-zinc-500 max-w-[260px] mx-auto"
+          >
             로그인 시 빵돌이 통합{' '}
-            <span className="hover:text-black/60 dark:hover:text-white/50 transition-colors cursor-pointer underline underline-offset-2 decoration-black/10">이용약관</span>
-            {' '}&{' '}
-            <span className="hover:text-black/60 dark:hover:text-white/50 transition-colors cursor-pointer underline underline-offset-2 decoration-black/10">개인정보처리방침</span>
+            <span className="hover:text-black/60 dark:hover:text-zinc-300 transition-colors cursor-pointer underline underline-offset-4 decoration-black/10 dark:decoration-white/10">이용약관</span>
+            {' '}및{' '}
+            <span className="hover:text-black/60 dark:hover:text-zinc-300 transition-colors cursor-pointer underline underline-offset-4 decoration-black/10 dark:decoration-white/10">개인정보처리방침</span>
             에 동의하게 됩니다.
           </motion.div>
         </>

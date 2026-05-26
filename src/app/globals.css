@@ -56,14 +56,14 @@ body {
 
 /* ── Light Brand Strategy ── */
 /* 배경이 매우 밝은 색상일 때 강제로 라이트 모드 느낌의 가독성을 확보합니다. */
-.light-brand {
-  /* 배경이 밝을 때 글자는 어둡게 */
+/* 단, 다크 모드(html.dark) 상태일 때는 Tailwind의 다크 모드 색상이 우선되어야 하므로 제외합니다. */
+html:not(.dark) .light-brand {
   --foreground: #171717;
 }
 
-.light-brand h1, 
-.light-brand p,
-.light-brand span:not([class*="bg-"]):not([class*="text-"]) {
+html:not(.dark) .light-brand h1, 
+html:not(.dark) .light-brand p,
+html:not(.dark) .light-brand span:not([class*="bg-"]):not([class*="text-"]) {
   color: #1a1a1a !important;
 }
 
