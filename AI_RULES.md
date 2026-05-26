@@ -30,7 +30,7 @@
 - **Dynamic Branding (Automatic Contrast & Compensation)**:
   - **Auto Contrast**: `isLightColor()` 유틸리티를 사용하여 배경색의 밝기를 분석하고, `.light-brand` 클래스를 통해 텍스트 색상을 자동으로 최적화합니다.
   - 클라이언트가 제공하는 `gradientFrom/To` 색상은 라이트/다크 모드에 따라 시스템이 자동으로 최적화합니다. (Light: `mix-blend-multiply`, Dark: `mix-blend-normal`)
-  - **Error Page Integration**: 에러 페이지(`src/app/error/page.tsx`) 또한 `clientId`를 전달받아 해당 클라이언트의 테마 색상을 유지하며, 사용자에게 일관된 브랜딩 경험을 제공합니다.
+  - **Error Page Integration**: 에러 페이지(`src/app/error/page.tsx`)는 특정 서비스에 종속되지 않고 **"빵돌이 통합 인증"** 서비스의 정체성을 유지합니다. 브랜드 컬러인 Amber 테마와 플로팅 로고 애니메이션을 적용하며, 탭 타이틀은 에러 타이틀(예: `서비스 연결이 필요해요`)을 포함하여 표시합니다.
 - **Independent Asset Management**:
   - 로고(`logoUrl`)와 파비콘(`faviconUrl`)은 독립적으로 관리됩니다. 탭 아이콘 설정 시 `faviconUrl`을 최우선으로 하며, 없을 경우에만 `logoUrl`을 폴백으로 사용합니다.
 - **Cinematic Texture**: 화면 전역에 `opacity-[0.03]` 수준의 필름 그레인(Grain) 오버레이를 적용하여 아날로그적인 질감 부여.
@@ -59,7 +59,7 @@
 3. **약관 동의 시스템 (Consent System)**:
    - 모든 약관(이용약관, 개인정보처리방침, 제3자 제공 동의 등)은 `content/policies/` 폴더 내에 MDX 파일 형식으로 버전별 관리됩니다.
    - `src/lib/policy.ts` 유틸리티를 통해 파싱되며, `useConsentCheck` 훅과 `consentStore`를 통해 신규 가입, 서비스 최초 접근, 약관 업데이트 등의 상황을 자동 감지합니다.
-   - **Selective UI**: 회원가입(`join`) 시 `isNewUser` 상태에 따라 노출 항목을 조정하며, 단일 항목 노출 시 '모두 동의' 버튼을 자동으로 숨겨 인지 부하를 최소화합니다.
+   - **Selective UI**: 회원가입(`join`) 시 `isNewUser` 상태에 따라 노출 항목을 조정하며, 단일 항목 노출 시 '모두 동의' 버튼을 자동으로 숨겨 인지 부하를 최소화합니다. 파라미터가 없을 경우 기본적으로 신규 유저(`true`)로 간주하여 모든 필수 약관을 노출합니다.
    - 약관 전문은 `/policies/[slug]` 페이지를 통해 제공되며, 사용자는 `ConsentModal` 컴포넌트를 통해 개별 약관에 대해 명시적 동의(Opt-in)를 진행합니다.
 4. **법적 책임의 분리**: 통합 서비스 내에서 개별 클라이언트 서비스 운영에 따른 책임은 각 운영자에게 있음을 명시합니다.
 
@@ -68,6 +68,9 @@
 ## 📂 아키텍처 및 기술 설계
 - **Next.js 16 (App Router)**: 최신 컨벤션 준수.
 - **Middleware**: `middleware.ts`를 통해 Edge 환경에서 Access Token 유무를 검증하고, 미인증 시 원래의 경로(`redirect_to`) 파라미터를 유지하며 안전하게 `/login`으로 리다이렉트합니다.
+- **Centralized Client Validation (`useClientInfo`)**:
+  - `clientId`의 존재 여부와 유효성 검증, 클라이언트 정보 조회를 `useClientInfo` 공통 훅에서 전담합니다.
+  - 검증 실패 시 에러 코드(`MISSING_CLIENT`, `INVALID_CLIENT`)와 함께 `/error` 페이지로 자동 리다이렉트하여 로직 중복을 최소화합니다.
 - **Unified API & Mock Strategy (Strict Standard)**: 
   - 모든 API 호출 함수(`src/lib/api/*.ts`)는 실제 API 로직과 Mock 로직을 하나의 함수 내에서 통합 관리해야 합니다.
   - **Environment Branching**: `if (process.env.NODE_ENV === 'development')` 조건절을 사용하여 개발 환경에서는 `src/lib/api/mock.ts`의 데이터를 반환하고, 운영 환경에서는 실제 `api` 인스턴스를 사용합니다.

@@ -22,7 +22,7 @@ export const MOCK_AUTH = {
     return `/callback/${provider}?${params.toString()}`;
   },
   
-  getCallbackResponse: (needsJoin: boolean = false, isNewUser: boolean = false): CallbackResponse => ({
+  getCallbackResponse: (needsJoin: boolean = false, isNewUser: boolean = true): CallbackResponse => ({
     accessToken: 'mock_access_token_abcde_fghij',
     needsJoin: needsJoin,
     isNewUser: isNewUser,

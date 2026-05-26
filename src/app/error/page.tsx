@@ -1,26 +1,28 @@
 'use client';
 
-import { Button } from '@/components/ui/Button';
-import { PageLayout } from '@/components/ui/PageLayout';
-import { getClientInfo } from '@/lib/api/account';
-import { MOCK_CLIENT_ID } from '@/lib/api/mock';
-import { OAuthClient } from '@/types';
 import { motion } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect } from 'react';
+import { Heading, Description, STAGGER_CONTAINER } from '@/components/ui/Typography';
+import { Button } from '@/components/ui/Button';
+import { PageLayout } from '@/components/ui/PageLayout';
 
 const ERROR_MESSAGES: Record<string, { title: string; desc: string }> = {
+  MISSING_CLIENT: {
+    title: '서비스 연결이 필요해요',
+    desc: '올바른 서비스 링크를 통해\n다시 접속해주시겠어요?',
+  },
   INVALID_CLIENT: {
-    title: '잘못된 접근이에요',
-    desc: '서비스 정보가 올바르지 않습니다. 다시 확인해주세요.',
+    title: '알 수 없는 서비스에요',
+    desc: '요청하신 서비스 정보를 찾을 수 없습니다.\n주소를 확인해주세요.',
   },
   UNAUTHORIZED: {
     title: '권한이 없어요',
-    desc: '접근 권한이 없거나 세션이 만료되었습니다.',
+    desc: '접근 권한이 없거나\n세션이 만료되었습니다.',
   },
   DEFAULT: {
     title: '문제가 발생했습니다',
-    desc: '요청을 처리하는 중 예기치 못한 오류가 발생했습니다.',
+    desc: '요청을 처리하는 중\n예기치 못한 오류가 발생했습니다.',
   },
 };
 
@@ -28,59 +30,85 @@ function ErrorContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const code = searchParams.get('code') ?? 'DEFAULT';
-  const { title, desc } = ERROR_MESSAGES[code] || ERROR_MESSAGES.DEFAULT;
-
-  const isDev = process.env.NODE_ENV === 'development';
-  const clientId = searchParams.get('clientId') || (isDev ? MOCK_CLIENT_ID : null);
-
-  const [client, setClient] = useState<OAuthClient | null>(null);
+  const errorInfo = ERROR_MESSAGES[code] || ERROR_MESSAGES.DEFAULT;
 
   useEffect(() => {
-    if (clientId) {
-      getClientInfo(clientId).then(setClient).catch(() => {});
-    }
-  }, [clientId]);
-
-  const from = client?.gradientFrom ?? '#EF4444';
-  const to = client?.gradientTo ?? '#B91C1C';
+    // 탭 타이틀을 에러 타이틀로 표시 (예: 서비스 연결이 필요해요 | 빵돌이 통합 인증)
+    document.title = `${errorInfo.title} | 빵돌이 통합 인증`;
+  }, [errorInfo.title]);
 
   return (
-    <PageLayout from={from} to={to} width={360}>
+    <PageLayout width={400} footer={<Footer />}>
       <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ 
-          opacity: 1, 
-          scale: 1,
-          x: [0, -4, 4, -4, 4, 0] // 에러 알림 진동 효과
-        }}
-        transition={{ 
-          duration: 0.4,
-          delay: 0.5
-        }}
-        className="flex flex-col items-center text-center"
+        initial="hidden"
+        animate="show"
+        variants={STAGGER_CONTAINER}
+        className="flex flex-col items-center text-center w-full"
       >
-        <div className="w-20 h-20 rounded-[24px] bg-red-500/10 flex items-center justify-center mb-6 text-red-500">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
-          </svg>
-        </div>
-        
-        <h1 className="text-2xl font-black text-gray-900 dark:text-zinc-100 tracking-tight mb-3">{title}</h1>
-        <p className="text-[15px] text-gray-500 dark:text-zinc-400 leading-relaxed mb-8 font-medium">{desc}</p>
-        
-        <Button 
-          variant="primary" 
-          fullWidth 
-          onClick={() => {
-            const loginUrl = clientId ? `/login?clientId=${clientId}` : '/login';
-            router.replace(loginUrl);
+        {/* Logo Section - Matching Home Style */}
+        <motion.div
+          variants={{
+            hidden: { y: 20, opacity: 0, filter: 'blur(10px)' },
+            show: { y: 0, opacity: 1, filter: 'blur(0px)', transition: { duration: 1, ease: [0.22, 1, 0.36, 1] } }
           }}
-          className="h-14 rounded-2xl bg-gray-900 dark:bg-zinc-100 text-white dark:text-black hover:bg-gray-800 dark:hover:bg-zinc-200 shadow-xl"
+          className="relative w-20 h-20 md:w-24 md:h-24 mb-6 md:mb-8"
         >
-          로그인으로 돌아가기
-        </Button>
+          <motion.div animate={{ y: [0, -8, 0] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }} className="w-full h-full relative">
+            <div className="absolute inset-0 bg-amber-500/20 dark:bg-amber-500/10 blur-3xl rounded-full" />
+            <div className="w-full h-full relative z-10 flex items-center justify-center bg-white dark:bg-zinc-800 rounded-[32px] shadow-2xl border border-black/5 dark:border-white/5">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                <line x1="12" y1="9" x2="12" y2="13" />
+                <line x1="12" y1="17" x2="12.01" y2="17" />
+              </svg>
+            </div>
+          </motion.div>
+        </motion.div>
+        
+        {/* Heading & Description with forced smaller sizes */}
+        <Heading className="text-[23px]! md:text-[25px]! mb-2 tracking-tight">
+          {errorInfo.title}
+        </Heading>
+        <Description className="!text-[14px] md:!text-[15px] mb-8 font-semibold text-black/40 dark:text-zinc-400 break-keep whitespace-pre-line leading-relaxed">
+          {errorInfo.desc}
+        </Description>
+        
+        <motion.div
+          variants={{
+            hidden: { y: 15, opacity: 0 },
+            show: { y: 0, opacity: 1, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } }
+          }}
+          className="w-full"
+        >
+          <Button 
+            variant="primary" 
+            size="lg"
+            fullWidth 
+            onClick={() => router.replace('/')}
+            className="text-white border-none shadow-xl transition-all duration-300 active:scale-[0.98]"
+            style={{
+              background: 'linear-gradient(135deg, #D97706, #F59E0B)',
+              boxShadow: '0 12px 24px -8px rgba(217, 119, 6, 0.5)'
+            }}
+          >
+            홈으로 이동
+          </Button>
+        </motion.div>
       </motion.div>
     </PageLayout>
+  );
+}
+
+function Footer() {
+  return (
+    <motion.footer 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ delay: 1.0, duration: 1 }}
+      className="text-[11px] font-bold text-amber-900/30 dark:text-amber-100/20 tracking-[0.2em] uppercase whitespace-nowrap"
+    >
+      © 2026 Team Breadkun
+    </motion.footer>
   );
 }
 

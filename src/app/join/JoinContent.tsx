@@ -3,16 +3,13 @@
 import { Button } from '@/components/ui/Button';
 import { ClientLogo } from '@/components/ui/ClientLogo';
 import { PageLayout } from '@/components/ui/PageLayout';
-import { getClientInfo } from '@/lib/api/account';
 import { joinProject } from '@/lib/api/auth';
 import { useAuthStore } from '@/store/authStore';
-import { Mode, OAuthClient } from '@/types';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import NextLink from 'next/link';
-
-import { MOCK_CLIENT_ID } from '@/lib/api/mock';
+import { useClientInfo } from '@/hooks/useClientInfo';
 
 interface ConsentItemProps {
   id: string;
@@ -86,15 +83,10 @@ function ConsentItem({ id, label, sublabel, link, required, checked, onChange }:
 export function JoinContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { clientInfo: storedClientInfo, setClientInfo } = useAuthStore();
+  const { client, clientId, isLoading, redirectUri, mode } = useClientInfo();
+  
+  const isNewUser = searchParams.get('isNewUser') !== 'false';
 
-  const isDev = process.env.NODE_ENV === 'development';
-  const clientId = searchParams.get('clientId') || (isDev ? MOCK_CLIENT_ID : null);
-  const redirectUri = searchParams.get('redirectUri') ?? (isDev ? 'http://localhost:4000/callback' : '');
-  const mode = (searchParams.get('mode') ?? 'redirect') as Mode;
-  const isNewUser = searchParams.get('isNewUser') === 'true';
-
-  const [client, setClient] = useState<OAuthClient | null>(storedClientInfo);
   const [joining, setJoining] = useState(false);
   const [canceling, setCanceling] = useState(false);
 
@@ -104,23 +96,6 @@ export function JoinContent() {
     privacy: false,
     thirdParty: false,
   });
-
-  useEffect(() => {
-    if (!clientId) {
-      router.replace('/error?code=INVALID_CLIENT');
-      return;
-    }
-    if (storedClientInfo) return;
-
-    getClientInfo(clientId)
-      .then((info) => {
-        setClient(info);
-        setClientInfo(info);
-      })
-      .catch(() => {
-        router.replace(`/error?code=INVALID_CLIENT&clientId=${clientId}`);
-      });
-  }, [clientId, router, storedClientInfo, setClientInfo]);
 
   const handleConsentChange = (id: string, checked: boolean) => {
     setConsents(prev => ({ ...prev, [id]: checked }));
@@ -166,7 +141,25 @@ export function JoinContent() {
     globalThis.location.assign(redirectUri);
   }
 
-  if (!client) return null;
+  if (isLoading || !client) {
+    return (
+      <PageLayout from="#f3f4f6" to="#e5e7eb" width={400}>
+        <div className="flex flex-col items-center">
+          <motion.div 
+            initial={{ opacity: 0.5 }}
+            animate={{ opacity: [0.5, 0.8, 0.5] }}
+            transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+            className="w-16 h-16 rounded-[22px] bg-black/6 dark:bg-white/6 mb-6" 
+          />
+          <div className="space-y-3 w-full flex flex-col items-center mb-8">
+            <div className="h-4 w-24 bg-black/4 dark:bg-white/4 rounded-full" />
+            <div className="h-8 w-40 bg-black/6 dark:bg-white/6 rounded-xl" />
+          </div>
+          <div className="w-full h-40 rounded-3xl bg-black/3 dark:bg-white/3" />
+        </div>
+      </PageLayout>
+    );
+  }
 
   return (
     <PageLayout from={client.gradientFrom} to={client.gradientTo} width={400}>

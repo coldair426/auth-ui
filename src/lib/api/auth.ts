@@ -26,7 +26,7 @@ export function handleCallback(
   if (process.env.NODE_ENV === 'development') {
     // 로컬 테스트 시 세션 스토리지 등을 활용해 join이 필요한지 여부를 제어할 수 있습니다.
     const forceJoin = sessionStorage.getItem('dev_force_join') === 'true';
-    const isNewUser = sessionStorage.getItem('dev_is_new_user') === 'true';
+    const isNewUser = sessionStorage.getItem('dev_is_new_user') !== 'false';
     return Promise.resolve(MOCK_AUTH.getCallbackResponse(forceJoin, isNewUser));
   }
   return api
