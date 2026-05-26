@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 
 interface ClientLogoProps {
-  logoUrl?: string;
+  logoUrl?: string | null;
   name: string;
   gradientFrom?: string;
   gradientTo?: string;
