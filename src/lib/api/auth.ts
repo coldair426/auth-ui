@@ -10,7 +10,7 @@ export function getSocialLoginUrl(
 ): Promise<{ url: string }> {
   if (process.env.NODE_ENV === 'development') {
     return Promise.resolve({ 
-      url: MOCK_AUTH.getLoginUrl(provider, redirectUri, mode) 
+      url: MOCK_AUTH.getLoginUrl(provider) 
     });
   }
   return api

@@ -101,8 +101,6 @@ export function LoginContent() {
   return (
     <PageLayout
       isExiting={isExiting}
-      isLoading={clientStatus === 'loading'}
-      isInvalid={isInvalid}
       from={client.gradientFrom}
       to={client.gradientTo}
       width={400}
