@@ -47,9 +47,13 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      * - login (login page)
+     * - join (join page)
+     * - callback (auth callback pages)
      * - consent (consent page)
      * - policies (policy pages)
+     * - error (error pages)
+     * - root path (/)
      */
-    '/((?!api|_next/static|_next/image|favicon.ico|login|consent|policies).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|login|join|callback|consent|policies|error|$).*)',
   ],
 };
