@@ -2,6 +2,8 @@
 
 import { motion } from 'framer-motion';
 import { ReactNode } from 'react';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
+import { ToastContainer } from '@/components/ui/Toast';
 
 interface PageLayoutProps {
   children: ReactNode;
@@ -24,20 +26,18 @@ export function PageLayout({
   to = '#F59E0B',
   width = 360,
 }: PageLayoutProps) {
-  // Shadow glow effect: 15% opacity for light, 40% for dark
-  // To handle dynamic hex safely without parsing, we apply shadow color via CSS variable and use opacity in RGBA or just let Tailwind handle it if static.
-  // For dynamic, we'll use a CSS variable for the shadow color.
-
   return (
     <main 
       className="fixed inset-0 overflow-hidden bg-[#fdfdfd] dark:bg-[#050505] transition-colors duration-1000 flex flex-col items-center justify-center p-4 md:p-6"
       style={{ '--client-primary': from } as any}
     >
+      {/* 전역 알림 컨테이너 */}
+      <ToastContainer />
+
       {/* Cinematic Grain Overlay */}
       <div className="absolute inset-0 z-[1] pointer-events-none opacity-[0.03] dark:opacity-[0.05] bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
 
-      {/* 배경 Orb 1 — Client Specific Primary */}
-      {/* Auto-Compensation: Multiply(Light/60%) -> Normal(Dark/30%) */}
+      {/* 배경 Orb 애니메이션 */}
       <motion.div
         animate={{
           x: [0, 150, -100, 80, 0],
@@ -50,7 +50,6 @@ export function PageLayout({
         style={{ filter: 'blur(100px)', background: `radial-gradient(circle, ${from} 0%, transparent 70%)` }}
       />
       
-      {/* 배경 Orb 2 — Client Specific Secondary */}
       <motion.div
         animate={{
           x: [0, -180, 120, -60, 0],
@@ -63,7 +62,6 @@ export function PageLayout({
         style={{ filter: 'blur(120px)', background: `radial-gradient(circle, ${to} 0%, transparent 70%)` }}
       />
 
-      {/* 배경 Orb 3 — Indigo/Purple Accent for Depth */}
       <motion.div
         animate={{
           x: [0, 200, -150, 0],
@@ -75,7 +73,6 @@ export function PageLayout({
         style={{ filter: 'blur(110px)', background: `radial-gradient(circle, #6366f1 0%, transparent 70%)` }}
       />
 
-      {/* 배경 Orb 4 — Cyan/Teal Accent for Richness */}
       <motion.div
         animate={{
           x: [0, -150, 150, 0],
@@ -113,17 +110,22 @@ export function PageLayout({
           className="relative w-full rounded-[64px] backdrop-blur-[50px] bg-white/70 md:bg-white/45 dark:bg-zinc-900/80 md:dark:bg-zinc-900/50 border border-white/80 dark:border-white/10 overflow-hidden"
           style={{ 
             width: `min(100%, ${width}px)`,
-            boxShadow: `0 50px 100px -20px ${from}25` // Dynamic shadow glow based on brand color
+            boxShadow: `0 50px 100px -20px ${from}25`
           }}
         >
-          {/* Shimmer Flare Animation - Subtler in dark mode */}
+          {/* Shimmer Flare */}
           <motion.div 
             animate={{ x: ['-200%', '200%'], opacity: [0, 1, 0] }}
             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", repeatDelay: 2 }}
             className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 dark:via-white/10 to-transparent pointer-events-none z-[11]"
           />
 
-          <div className="px-8 pt-12 pb-12 md:pb-14">
+          {/* 카드 내부 우측 상단 테마 토글 */}
+          <div className="absolute top-6 right-6 z-20">
+            <ThemeToggle />
+          </div>
+
+          <div className="px-8 pt-16 pb-10">
             {children}
           </div>
         </motion.div>

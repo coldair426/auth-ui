@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import type { Viewport } from "next";
 import "./globals.css";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -33,9 +32,10 @@ export default function RootLayout({
             __html: `
               (function() {
                 try {
-                  const savedTheme = localStorage.getItem('theme');
+                  const savedTheme = localStorage.getItem('theme') || 'auto';
                   const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                  const isDark = savedTheme === 'dark' || (!savedTheme && systemPrefersDark);
+                  const isDark = savedTheme === 'dark' || (savedTheme === 'auto' && systemPrefersDark);
+                  
                   if (isDark) {
                     document.documentElement.classList.add('dark');
                   } else {
@@ -49,7 +49,6 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col">
         {children}
-        <ThemeToggle />
       </body>
     </html>
   );

@@ -22,4 +22,4 @@ Integrated Authentication (SSO) service for the BREADKUN ecosystem and partner p
 
 ## Contact & Support
 - Website: [breadkun.com](https://breadkun.com)
-- Developer: Breadkun Corporation
+- Developer: Team Breadkun

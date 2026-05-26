@@ -1,88 +1,96 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useEffect, useState, useRef } from 'react';
+import { motion } from 'framer-motion';
+import { showToast } from './Toast';
+
+type Theme = 'auto' | 'light' | 'dark';
 
 /**
- * 테마 토글 컴포넌트
- * - 사용자의 설정을 localStorage에 저장하여 기억합니다.
- * - 설정이 없는 경우 시스템 테마(Dark Mode) 설정을 따릅니다.
- * - 아이콘은 표준 유니코드 이모지를 사용하여 저작권 문제에서 자유롭습니다.
+ * 최적화된 테마 토글 컴포넌트
+ * - 아이콘 중심으로 간결하게 디자인되었습니다.
+ * - 변경 시 토스트 알림을 띄워 시각적 피드백을 제공합니다.
  */
 export function ThemeToggle() {
   const [mounted, setMounted] = useState(false);
-  const [isDark, setIsDark] = useState(false);
+  const [theme, setTheme] = useState<Theme>('auto');
+  const isFirstRender = useRef(true);
 
   useEffect(() => {
     setMounted(true);
-    
-    // 1. 저장된 설정 확인
-    const savedTheme = localStorage.getItem('theme');
-    // 2. 시스템 설정 확인
-    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    
-    // 우선순위: 저장된 설정 > 시스템 설정
-    const initialDark = savedTheme === 'dark' || (!savedTheme && systemPrefersDark);
-    
-    setIsDark(initialDark);
-    if (initialDark) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
+    const savedTheme = localStorage.getItem('theme') as Theme | null;
+    if (savedTheme) {
+      setTheme(savedTheme);
     }
   }, []);
 
-  const toggleTheme = () => {
-    const newDark = !isDark;
-    setIsDark(newDark);
-    
-    if (newDark) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
+  useEffect(() => {
+    if (!mounted) return;
+
+    const applyTheme = () => {
+      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const isDark = theme === 'dark' || (theme === 'auto' && systemPrefersDark);
+      
+      if (isDark) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    };
+
+    applyTheme();
+    localStorage.setItem('theme', theme);
+
+    // 첫 렌더링(초기 설정 로드) 시에는 토스트를 띄우지 않음
+    if (!isFirstRender.current) {
+      const themeNames = { auto: '자동', light: '라이트', dark: '다크' };
+      showToast(`${themeNames[theme]} 테마가 적용되었습니다.`, 'info');
     } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
+      isFirstRender.current = false;
     }
-  };
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = () => {
+      if (theme === 'auto') applyTheme();
+    };
+
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, [theme, mounted]);
 
   if (!mounted) return null;
 
+  const options: { value: Theme; icon: string; label: string }[] = [
+    { value: 'light', icon: '☀️', label: '라이트' },
+    { value: 'auto', icon: '🌓', label: '자동' },
+    { value: 'dark', icon: '🌙', label: '다크' },
+  ];
+
   return (
-    <motion.button
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
-      onClick={toggleTheme}
-      className="fixed bottom-8 right-8 z-[9999] w-14 h-14 rounded-full bg-white/40 dark:bg-zinc-900/40 backdrop-blur-2xl border border-white/50 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.12)] flex items-center justify-center cursor-pointer group"
-      aria-label="테마 전환"
-    >
-      <div className="relative w-6 h-6 flex items-center justify-center">
-        <AnimatePresence mode="wait">
-          {isDark ? (
-            <motion.span
-              key="moon"
-              initial={{ y: 10, opacity: 0, rotate: -20 }}
-              animate={{ y: 0, opacity: 1, rotate: 0 }}
-              exit={{ y: -10, opacity: 0, rotate: 20 }}
-              className="absolute text-2xl select-none"
-            >
-              🌙
-            </motion.span>
-          ) : (
-            <motion.span
-              key="sun"
-              initial={{ y: 10, opacity: 0, rotate: 20 }}
-              animate={{ y: 0, opacity: 1, rotate: 0 }}
-              exit={{ y: -10, opacity: 0, rotate: -20 }}
-              className="absolute text-2xl select-none"
-            >
-              ☀️
-            </motion.span>
+    <div className="flex items-center p-0.5 rounded-full bg-zinc-500/5 dark:bg-white/5 backdrop-blur-sm border border-black/5 dark:border-white/5 w-fit">
+      {options.map((opt) => (
+        <button
+          key={opt.value}
+          onClick={() => setTheme(opt.value)}
+          className={`
+            relative p-2 rounded-full transition-all duration-300 flex items-center justify-center
+            ${theme === opt.value 
+              ? 'text-zinc-900 dark:text-white' 
+              : 'text-zinc-400 hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300'}
+          `}
+          title={`${opt.label} 모드`}
+          aria-label={`${opt.label} 모드`}
+        >
+          {theme === opt.value && (
+            <motion.div
+              layoutId="activeTheme"
+              className="absolute inset-0 bg-white/80 dark:bg-zinc-800 shadow-[0_2px_8px_rgba(0,0,0,0.08)] dark:shadow-none rounded-full"
+              transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+            />
           )}
-        </AnimatePresence>
-      </div>
-      
-      {/* 시각적 피드백: Hover시 링 효과 */}
-      <div className="absolute inset-0 rounded-full border-2 border-amber-500/0 group-hover:border-amber-500/20 transition-colors" />
-    </motion.button>
+          <span className="relative z-10 text-base leading-none filter drop-shadow-sm">{opt.icon}</span>
+        </button>
+      ))}
+    </div>
   );
 }
