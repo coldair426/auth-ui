@@ -31,7 +31,7 @@ export function middleware(request: NextRequest) {
         headers: requestHeaders,
       },
     });
-  } catch (error) {
+  } catch {
     // 파싱 실패 시 로그인으로
     const loginUrl = new URL('/login', request.url);
     return NextResponse.redirect(loginUrl);

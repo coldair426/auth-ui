@@ -10,8 +10,6 @@ interface PageLayoutProps {
   children: ReactNode;
   footer?: ReactNode;
   isExiting?: boolean;
-  isLoading?: boolean;
-  isInvalid?: boolean;
   from?: string;
   to?: string;
   width?: number;
@@ -21,8 +19,6 @@ export function PageLayout({
   children,
   footer,
   isExiting = false,
-  isLoading = false,
-  isInvalid = false,
   from = '#D97706',
   to = '#F59E0B',
   width = 360,
@@ -32,7 +28,7 @@ export function PageLayout({
   return (
     <main 
       className={`fixed inset-0 overflow-hidden bg-[#fdfdfd] dark:bg-[#050505] transition-colors duration-1000 flex flex-col items-center justify-center p-4 md:p-6 ${isBackgroundLight ? 'light-brand' : ''}`}
-      style={{ '--client-primary': from } as any}
+      style={{ '--client-primary': from } as React.CSSProperties}
     >
       {/* 전역 알림 컨테이너 */}
       <ToastContainer />

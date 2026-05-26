@@ -1,4 +1,4 @@
-import { Metadata, ResolvingMetadata } from 'next';
+import { Metadata } from 'next';
 import { Suspense } from 'react';
 import { getClientInfo } from '@/lib/api/account';
 import { MOCK_CLIENT_ID } from '@/lib/api/mock';
@@ -9,8 +9,7 @@ interface Props {
 }
 
 export async function generateMetadata(
-  { searchParams }: Props,
-  parent: ResolvingMetadata
+  { searchParams }: Props
 ): Promise<Metadata> {
   const { clientId: rawClientId } = await searchParams;
   const isDev = process.env.NODE_ENV === 'development';

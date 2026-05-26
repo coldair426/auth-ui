@@ -90,7 +90,7 @@ export function LoginContent() {
       
       setIsExiting(true);
       setTimeout(() => {
-        window.location.assign(url);
+        globalThis.location.assign(url);
       }, 400);
     } catch {
       setLoadingProvider(null);
@@ -152,7 +152,7 @@ export function LoginContent() {
             whileTap={{ scale: 0.97 }}
             onClick={() => setRetryKey((k) => k + 1)}
             className="w-full h-14 bg-gray-900 dark:bg-zinc-100 text-white dark:text-black rounded-2xl text-[15px] font-bold tracking-tight shadow-lg transition-all cursor-pointer flex items-center justify-center gap-2.5"
-            style={{ '--btn-hover': '#1f2937' } as any}
+            style={{ '--btn-hover': '#1f2937' } as React.CSSProperties}
             aria-label="데이터 로드 재시도"
           >
             <motion.div animate={{ rotate: 360 }} transition={{ duration: 4, repeat: Infinity, ease: "linear" }}>
@@ -214,7 +214,7 @@ export function LoginContent() {
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 1.0 }}
+              transition={{ duration: 0.5, delay: 1 }}
               className="text-[14px] font-semibold text-black/40 dark:text-zinc-400 mt-1"
             >
               빵돌이 통합 계정으로 로그인
@@ -237,7 +237,7 @@ export function LoginContent() {
           >
             로그인 시 빵돌이 통합{' '}
             <span className="hover:text-black/60 dark:hover:text-zinc-300 transition-colors cursor-pointer underline underline-offset-4 decoration-black/10 dark:decoration-white/10">이용약관</span>
-            {' '}및{' '}
+            {' 및 '}
             <span className="hover:text-black/60 dark:hover:text-zinc-300 transition-colors cursor-pointer underline underline-offset-4 decoration-black/10 dark:decoration-white/10">개인정보처리방침</span>
             에 동의하게 됩니다.
           </motion.div>

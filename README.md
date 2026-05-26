@@ -34,6 +34,11 @@ https://auth.breadkun.com/login?clientId={MY_CLIENT_ID}&redirectUri={MY_REDIRECT
 - **피쉬하이(Fishhi) 브랜딩**: 기본 개발용 목업으로 시원한 하늘색 테마와 물고기 로고가 적용된 피쉬하이 환경을 제공합니다.
 - **Zero-Manual-Switching**: 별도의 코드 수정 없이 운영 배포 시에는 자동으로 실제 API 엔드포인트로 전환됩니다.
 
+### 3. MDX 기반 동의 시스템 (Consent System)
+모든 정책(이용약관, 개인정보처리방침 등)은 `content/policies/` 내에 MDX 형식으로 버전별로 관리됩니다.
+- **자동 감지**: `useConsentCheck` 훅을 통해 신규 가입, 약관 개정, 신규 서비스 접근 시 동의 모달이 즉각 트리거됩니다.
+- **미들웨어 보안**: Next.js Edge Middleware를 통해 인증 토큰을 검증하고, 유효하지 않은 접근을 차단합니다.
+
 ---
 
 ## 📱 주요 페이지 및 기능
@@ -44,16 +49,18 @@ https://auth.breadkun.com/login?clientId={MY_CLIENT_ID}&redirectUri={MY_REDIRECT
 | `/login` | 메인 로그인 화면 | 로고, 파비콘, 그라데이션, 타이틀 |
 | `/join` | 서비스 가입 동의 | 로고, 파비콘, 그라데이션, 타이틀 |
 | `/callback/[provider]` | 인증 콜백 처리 | 자동 리다이렉션 처리 |
+| `/policies/[slug]` | 약관 전문 조회 | MDX 파일 기반 동적 렌더링 |
 | `/error` | 에러 안내 화면 | 클라이언트별 테마(그라데이션), 커스텀 에러 메시지 |
 
 ---
 
 ## 🛠 기술 스택
 
-- **Framework**: Next.js 16 (App Router / Turbopack)
+- **Framework**: Next.js 16 (App Router / Turbopack / Edge Middleware)
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS 4, Framer Motion
 - **State Management**: Zustand
+- **Content**: next-mdx-remote, gray-matter
 - **API**: Axios (Interceptors for Token Refresh)
 - **Performance**: WebP format assets, Metadata optimization
 

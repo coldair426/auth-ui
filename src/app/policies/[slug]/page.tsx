@@ -33,7 +33,7 @@ export default async function PolicyPage({ params, searchParams }: Props) {
   let policy;
   try {
     policy = await getPolicyBySlug(slug, version);
-  } catch (error) {
+  } catch {
     return (
       <PageLayout width={600}>
         <div className="text-center py-20">

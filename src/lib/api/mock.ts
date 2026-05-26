@@ -1,4 +1,4 @@
-import { OAuthClient, Provider, Mode, CallbackResponse } from '@/types';
+import { OAuthClient, Provider, CallbackResponse } from '@/types';
 import type { UserConsent } from '@/types/consent';
 
 export const MOCK_CLIENT_ID = '77777777-7777-7777-7777-777777777777';
@@ -14,7 +14,7 @@ export const MOCK_CLIENT: OAuthClient = {
 };
 
 export const MOCK_AUTH = {
-  getLoginUrl: (provider: Provider, redirectUri: string, mode: Mode) => {
+  getLoginUrl: (provider: Provider) => {
     const params = new URLSearchParams({
       code: 'mock_auth_code_12345',
       state: 'mock_state_67890',

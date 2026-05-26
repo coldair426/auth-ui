@@ -52,21 +52,23 @@
 
 1. **조직 명칭**: 모든 공식 문서 및 UI에서 **"Team Breadkun"** 명칭을 사용합니다.
 2. **중앙 집중형 회원 관리**: 모든 사용자 정보는 통합 인증 서버에서 관리하며, 개별 프로젝트는 고유 ID만 보유합니다.
-3. **통합 약관 원칙 (Unified Terms)**: 개별 프로젝트별 약관을 작성하지 않고, **"빵돌이 통합 서비스 이용약관"**을 공통으로 사용합니다. 
-   - 사용자는 빵돌이 계정을 생성하는 시점에 통합 약관에 동의합니다.
-   - 개별 서비스 연결 시에는 해당 서비스로의 **"정보 제공 동의"** 프로세스만 거칩니다.
-4. **법적 책임의 분리**: `/join` 페이지를 통해 서비스 이용 책임이 개별 운영자에게 있음을 명시합니다.
+3. **약관 동의 시스템 (Consent System)**:
+   - 모든 약관(이용약관, 개인정보처리방침, 제3자 제공 동의 등)은 `content/policies/` 폴더 내에 MDX 파일 형식으로 버전별 관리됩니다.
+   - `src/lib/policy.ts` 유틸리티를 통해 파싱되며, `useConsentCheck` 훅과 `consentStore`를 통해 신규 가입, 서비스 최초 접근, 약관 업데이트 등의 상황을 자동 감지합니다.
+   - 약관 전문은 `/policies/[slug]` 페이지를 통해 제공되며, 사용자는 `ConsentModal` 컴포넌트를 통해 개별 약관에 대해 명시적 동의(Opt-in)를 진행합니다.
+4. **법적 책임의 분리**: 통합 서비스 내에서 개별 클라이언트 서비스 운영에 따른 책임은 각 운영자에게 있음을 명시합니다.
 
 ---
 
 ## 📂 아키텍처 및 기술 설계
 - **Next.js 16 (App Router)**: 최신 컨벤션 준수.
+- **Middleware**: `middleware.ts`를 통해 Edge 환경에서 Access Token 유무를 검증하고, 미인증 시 원래의 경로(`redirect_to`) 파라미터를 유지하며 안전하게 `/login`으로 리다이렉트합니다.
 - **Unified API & Mock Strategy (Strict Standard)**: 
   - 모든 API 호출 함수(`src/lib/api/*.ts`)는 실제 API 로직과 Mock 로직을 하나의 함수 내에서 통합 관리해야 합니다.
   - **Environment Branching**: `if (process.env.NODE_ENV === 'development')` 조건절을 사용하여 개발 환경에서는 `src/lib/api/mock.ts`의 데이터를 반환하고, 운영 환경에서는 실제 `api` 인스턴스를 사용합니다.
   - **Zero-Manual-Switching**: 환경 변수나 코드의 수동 변경 없이, 빌드 환경에 따라 자동으로 동작을 전환하는 것을 원칙으로 합니다.
   - **Metadata Integration**: 페이지의 `generateMetadata` 또한 공통 API 함수를 사용하여 UI와 브라우저 탭 정보(제목, 파비콘)가 항상 Mock 데이터와 동기화되도록 합니다.
-- **Mocking Data**: `src/lib/api/mock.ts`는 시스템의 유일한 가짜 데이터 소스(Single Source of Truth)이며, 로컬 개발 시 백엔드 없이도 전체 인증 플로우(로그인, 회원가입, 토큰 갱신)를 완벽히 재현할 수 있어야 합니다.
+- **Mocking Data**: `src/lib/api/mock.ts`는 시스템의 유일한 가짜 데이터 소스(Single Source of Truth)이며, 로컬 개발 시 백엔드 없이도 전체 인증 플로우(로그인, 회원가입, 토큰 갱신, 동의 처리)를 완벽히 재현할 수 있어야 합니다.
 - **PageLayout Component**: `src/components/ui/PageLayout.tsx`는 배경, 자동 대비 로직, 컨테이너를 통합 관리합니다.
 - **Toast System**: `src/components/ui/Toast.tsx`를 통한 전역 상태 비의존적 알림 처리.
 

@@ -56,7 +56,7 @@ export function ConsentModal({
 
       await postConsents(request);
       onComplete();
-    } catch (error) {
+    } catch {
       showToast('동의 처리 중 오류가 발생했습니다.', 'error');
     } finally {
       setIsSubmitting(false);

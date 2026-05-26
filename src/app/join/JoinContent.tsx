@@ -48,11 +48,11 @@ export function JoinContent() {
   function handleComplete(accessToken: string) {
     if (mode === 'popup') {
       const targetOrigin = redirectUri ? new URL(redirectUri).origin : '*';
-      window.opener?.postMessage({ type: 'AUTH_SUCCESS', accessToken }, targetOrigin);
-      window.close();
+      globalThis.opener?.postMessage({ type: 'AUTH_SUCCESS', accessToken }, targetOrigin);
+      globalThis.close();
       return;
     }
-    window.location.assign(redirectUri);
+    globalThis.location.assign(redirectUri);
   }
 
   async function handleJoin() {
@@ -72,10 +72,10 @@ export function JoinContent() {
   function handleCancel() {
     setCanceling(true);
     if (mode === 'popup') {
-      window.close();
+      globalThis.close();
       return;
     }
-    window.location.assign(redirectUri);
+    globalThis.location.assign(redirectUri);
   }
 
   if (!client) return null;
@@ -99,15 +99,15 @@ export function JoinContent() {
       >
         {/* Logo & Title Section */}
         <div className="flex flex-col items-center mb-8 text-center">
-          <ClientLogo 
-            logoUrl={client.logoUrl} 
-            name={client.name} 
-            gradientFrom={client.gradientFrom} 
+          <ClientLogo
+            logoUrl={client.logoUrl}
+            name={client.name}
+            gradientFrom={client.gradientFrom}
             gradientTo={client.gradientTo}
             size={112}
             className="mb-2"
           />
-          <motion.h1 
+          <motion.h1
             variants={{
               hidden: { y: 15, opacity: 0, filter: 'blur(10px)' },
               show: { y: 0, opacity: 1, filter: 'blur(0px)', transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } }
@@ -133,7 +133,7 @@ export function JoinContent() {
             hidden: { y: 15, opacity: 0, filter: 'blur(8px)' },
             show: { y: 0, opacity: 1, filter: 'blur(0px)', transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } }
           }}
-          className="w-full mb-8 overflow-hidden rounded-[32px] bg-black/[0.03] dark:bg-white/[0.03] border border-black/5 dark:border-white/10 backdrop-blur-sm p-6"
+          className="w-full mb-8 overflow-hidden rounded-4xl bg-black/3 dark:bg-white/3 border border-black/5 dark:border-white/10 backdrop-blur-sm p-6"
         >
           <p className="mb-4 font-bold text-[13px] tracking-tight text-gray-900 dark:text-zinc-100 opacity-90">
             이용 약관 및 정보 제공 동의
@@ -142,8 +142,11 @@ export function JoinContent() {
             <li className="flex gap-2.5">
               <span className="shrink-0 text-black/20 dark:text-white/20 mt-1">•</span>
               <span>
-                <NextLink href="/policies/terms-of-service" target="_blank" className="underline underline-offset-2 hover:text-black dark:hover:text-white transition-colors">빵돌이 통합 이용약관</NextLink> 및{' '}
-                <NextLink href="/policies/privacy-policy" target="_blank" className="underline underline-offset-2 hover:text-black dark:hover:text-white transition-colors">개인정보 처리방침</NextLink>에 동의하게 됩니다.
+                빵돌이 통합 인증{' '}
+                <NextLink href="/policies/terms-of-service" target="_blank"
+                          className="underline underline-offset-2 hover:text-black dark:hover:text-white transition-colors">서비스 이용약관</NextLink> 및{' '}
+                <NextLink href="/policies/privacy-policy" target="_blank"
+                          className="underline underline-offset-2 hover:text-black dark:hover:text-white transition-colors">개인정보 처리방침</NextLink>에 동의하게 됩니다.
               </span>
             </li>
             <li className="flex gap-2.5">
@@ -165,25 +168,25 @@ export function JoinContent() {
           }}
           className="flex flex-col gap-3 w-full"
         >
-          <Button 
+          <Button
             variant="primary"
-            fullWidth 
-            loading={joining} 
-            disabled={canceling} 
+            fullWidth
+            loading={joining}
+            disabled={canceling}
             onClick={handleJoin}
             className="h-14 rounded-2xl text-white shadow-xl transition-all duration-300 active:scale-[0.98]"
-            style={{ 
+            style={{
               background: `linear-gradient(135deg, ${client.gradientFrom}, ${client.gradientTo})`,
               boxShadow: `0 12px 24px -8px ${client.gradientFrom}60`
             }}
           >
             모든 약관에 동의하고 {client.name} 시작하기
           </Button>
-          <Button 
-            variant="ghost" 
-            fullWidth 
-            loading={canceling} 
-            disabled={joining} 
+          <Button
+            variant="ghost"
+            fullWidth
+            loading={canceling}
+            disabled={joining}
             onClick={handleCancel}
             className="h-12 rounded-2xl font-bold text-[14px] text-black/30 dark:text-zinc-500 hover:text-black dark:hover:text-zinc-300 transition-colors"
           >
