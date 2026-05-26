@@ -10,6 +10,7 @@ import { Mode, OAuthClient } from '@/types';
 import { motion } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import NextLink from 'next/link';
 
 import { MOCK_CLIENT_ID } from '@/lib/api/mock';
 
@@ -79,11 +80,6 @@ export function JoinContent() {
 
   if (!client) return null;
 
-  // AI_RULES 기반 테마 컨벤션: dark: 프리픽스로 관리
-  const titleColor = 'text-[#2D2319] dark:text-zinc-50';
-  const descColor = 'text-[#5C4D3E] dark:text-zinc-400';
-  const disclaimerClasses = 'bg-black/[0.05] dark:bg-white/[0.05] border-black/5 dark:border-white/10';
-
   return (
     <PageLayout from={client.gradientFrom} to={client.gradientTo} width={400}>
       <motion.div
@@ -145,7 +141,10 @@ export function JoinContent() {
           <ul className="space-y-3 text-[12.5px] font-semibold leading-relaxed text-black/50 dark:text-zinc-400">
             <li className="flex gap-2.5">
               <span className="shrink-0 text-black/20 dark:text-white/20 mt-1">•</span>
-              <span><b>빵돌이 통합 이용약관</b> 및 <b>개인정보 처리방침</b>에 동의하게 됩니다.</span>
+              <span>
+                <NextLink href="/terms" className="underline underline-offset-2 hover:text-black dark:hover:text-white transition-colors">빵돌이 통합 이용약관</NextLink> 및{' '}
+                <NextLink href="/privacy" className="underline underline-offset-2 hover:text-black dark:hover:text-white transition-colors">개인정보 처리방침</NextLink>에 동의하게 됩니다.
+              </span>
             </li>
             <li className="flex gap-2.5">
               <span className="shrink-0 text-black/20 dark:text-white/20 mt-1">•</span>
@@ -178,7 +177,7 @@ export function JoinContent() {
               boxShadow: `0 12px 24px -8px ${client.gradientFrom}60`
             }}
           >
-            동의하고 {client.name} 시작하기
+            모든 약관에 동의하고 {client.name} 시작하기
           </Button>
           <Button 
             variant="ghost" 
