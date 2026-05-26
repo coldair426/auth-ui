@@ -48,19 +48,19 @@ export default async function PolicyPage({ params, searchParams }: Props) {
 
   return (
     <PageLayout width={800}>
-      <div className="max-h-[80vh] overflow-y-auto pr-6 custom-scrollbar text-left">
-        <header className="mb-10 pb-6 border-b border-black/10 dark:border-white/10">
-          <Heading className="text-3xl mb-3">{meta.title}</Heading>
-          <div className="flex items-center gap-4 text-sm font-semibold text-amber-600 dark:text-amber-500">
+      <div className="text-left">
+        <header className="mb-8 md:mb-10 pb-6 border-b border-black/10 dark:border-white/10">
+          <Heading className="text-2xl md:text-3xl mb-3">{meta.title}</Heading>
+          <div className="flex flex-wrap items-center gap-3 md:gap-4 text-[13px] md:text-sm font-semibold text-amber-600 dark:text-amber-500">
             <span>버전: {meta.version}</span>
             <span>시행일: {meta.effectiveAt}</span>
           </div>
-          <Description className="mt-4 text-base text-gray-700 dark:text-zinc-300">
+          <Description className="mt-4 text-[14px] md:text-base text-gray-700 dark:text-zinc-300 break-keep">
             {meta.summary}
           </Description>
         </header>
 
-        <article className="prose prose-zinc dark:prose-invert prose-headings:font-extrabold prose-h1:text-2xl prose-h2:text-xl prose-h3:text-lg prose-p:text-sm prose-p:leading-relaxed max-w-none">
+        <article className="prose prose-zinc dark:prose-invert prose-headings:font-extrabold prose-h1:text-xl md:prose-h1:text-2xl prose-h2:text-lg md:prose-h2:text-xl prose-h3:text-base md:prose-h3:text-lg prose-p:text-[14px] md:prose-p:text-sm prose-p:leading-relaxed max-w-none">
           <MDXRemote source={content} />
         </article>
       </div>

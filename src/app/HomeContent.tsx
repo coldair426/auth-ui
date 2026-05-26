@@ -32,7 +32,7 @@ export default function HomeContent() {
             hidden: { y: 20, opacity: 0, filter: 'blur(10px)' },
             show: { y: 0, opacity: 1, filter: 'blur(0px)', transition: { duration: 1, ease: [0.22, 1, 0.36, 1] } }
           }}
-          className="relative w-24 h-24 md:w-26 md:h-26 mb-8"
+          className="relative w-20 h-20 md:w-26 md:h-26 mb-6 md:mb-8"
         >
           <motion.div animate={{ y: [0, -8, 0] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }} className="w-full h-full relative">
             <div className="absolute inset-0 bg-amber-500/30 blur-3xl rounded-full" />
@@ -41,8 +41,8 @@ export default function HomeContent() {
         </motion.div>
 
         <Badge className="mb-6">One Account. Every Access.</Badge>
-        <Heading className="mb-5 text-center">빵돌이 통합 인증</Heading>
-        <Description className="mb-4 text-center">
+        <Heading className="mb-4 md:mb-5 text-center">빵돌이 통합 인증</Heading>
+        <Description className="mb-4 text-center break-keep">
           어디서나 간편하게<br />
           <span className="text-amber-600/90 dark:text-amber-500/90 font-bold">당신의 계정을 하나로 통합하세요</span>
         </Description>

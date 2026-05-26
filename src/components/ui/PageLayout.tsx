@@ -27,14 +27,14 @@ export function PageLayout({
 
   return (
     <main 
-      className={`fixed inset-0 overflow-hidden bg-[#fdfdfd] dark:bg-[#050505] transition-colors duration-1000 flex flex-col items-center justify-center p-4 md:p-6 ${isBackgroundLight ? 'light-brand' : ''}`}
+      className={`relative min-h-screen overflow-y-auto bg-[#fdfdfd] dark:bg-[#050505] transition-colors duration-1000 flex flex-col items-center p-4 md:p-6 ${isBackgroundLight ? 'light-brand' : ''}`}
       style={{ '--client-primary': from } as React.CSSProperties}
     >
       {/* 전역 알림 컨테이너 */}
       <ToastContainer />
 
       {/* Cinematic Grain Overlay */}
-      <div className="absolute inset-0 z-[1] pointer-events-none opacity-[0.03] dark:opacity-[0.05] bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+      <div className="fixed inset-0 z-[1] pointer-events-none opacity-[0.03] dark:opacity-[0.05] bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
 
       {/* 배경 Orb 애니메이션 */}
       <motion.div
@@ -45,7 +45,7 @@ export function PageLayout({
           rotate: [0, 120, 240, 360],
         }}
         transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute -top-[15%] -left-[10%] w-[800px] h-[800px] rounded-full pointer-events-none mix-blend-multiply dark:mix-blend-normal opacity-60 dark:opacity-30"
+        className="fixed -top-[15%] -left-[10%] w-[800px] h-[800px] rounded-full pointer-events-none mix-blend-multiply dark:mix-blend-normal opacity-60 dark:opacity-30"
         style={{ filter: 'blur(100px)', background: `radial-gradient(circle, ${from} 0%, transparent 70%)` }}
       />
       
@@ -57,7 +57,7 @@ export function PageLayout({
           rotate: [360, 240, 120, 0],
         }}
         transition={{ duration: 13, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute -bottom-[15%] -right-[15%] w-[900px] h-[900px] rounded-full pointer-events-none mix-blend-multiply dark:mix-blend-normal opacity-50 dark:opacity-25"
+        className="fixed -bottom-[15%] -right-[15%] w-[900px] h-[900px] rounded-full pointer-events-none mix-blend-multiply dark:mix-blend-normal opacity-50 dark:opacity-25"
         style={{ filter: 'blur(120px)', background: `radial-gradient(circle, ${to} 0%, transparent 70%)` }}
       />
 
@@ -68,7 +68,7 @@ export function PageLayout({
           scale: [0.8, 1.2, 0.8],
         }}
         transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-[20%] right-[5%] w-[600px] h-[600px] rounded-full pointer-events-none mix-blend-overlay opacity-30 dark:opacity-20"
+        className="fixed top-[20%] right-[5%] w-[600px] h-[600px] rounded-full pointer-events-none mix-blend-overlay opacity-30 dark:opacity-20"
         style={{ filter: 'blur(110px)', background: `radial-gradient(circle, #6366f1 0%, transparent 70%)` }}
       />
 
@@ -79,12 +79,12 @@ export function PageLayout({
           scale: [1, 0.7, 1.1, 1],
         }}
         transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute bottom-[10%] left-[5%] w-[500px] h-[500px] rounded-full pointer-events-none mix-blend-soft-light opacity-20 dark:opacity-10"
+        className="fixed bottom-[10%] left-[5%] w-[500px] h-[500px] rounded-full pointer-events-none mix-blend-soft-light opacity-20 dark:opacity-10"
         style={{ filter: 'blur(90px)', background: `radial-gradient(circle, #06b6d4 0%, transparent 70%)` }}
       />
 
       {/* 중앙 콘텐츠 (카드) */}
-      <div className="relative z-10 w-full flex items-center justify-center">
+      <div className="relative z-10 w-full flex-1 flex items-center justify-center py-8 md:py-12">
         <motion.div
           initial={{ y: 60, opacity: 0, scale: 0.94, filter: 'blur(10px)' }}
           animate={isExiting ? {
@@ -106,7 +106,7 @@ export function PageLayout({
             ease: [0.22, 1, 0.36, 1],
             delay: 0.2,
           }}
-          className="relative w-full rounded-[64px] backdrop-blur-[50px] bg-white/75 md:bg-white/45 dark:bg-zinc-900/90 md:dark:bg-zinc-900/70 border border-black/10 dark:border-white/[0.08] overflow-hidden shadow-2xl"
+          className="relative w-full rounded-[40px] md:rounded-[64px] backdrop-blur-[50px] bg-white/75 md:bg-white/45 dark:bg-zinc-900/90 md:dark:bg-zinc-900/70 border border-black/10 dark:border-white/[0.08] overflow-hidden shadow-2xl"
           style={{ 
             width: `min(100%, ${width}px)`,
             boxShadow: isBackgroundLight 
@@ -124,11 +124,11 @@ export function PageLayout({
           />
 
           {/* 카드 내부 우측 상단 테마 토글 */}
-          <div className="absolute top-6 right-6 z-20">
+          <div className="absolute top-5 right-5 md:top-6 md:right-6 z-20">
             <ThemeToggle />
           </div>
 
-          <div className="px-8 pt-16 pb-10">
+          <div className="px-6 py-10 md:px-8 md:pt-16 md:pb-10">
             {children}
           </div>
         </motion.div>

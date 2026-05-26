@@ -32,11 +32,16 @@ export function CallbackContent() {
     const mode = (sessionStorage.getItem('auth_mode') ?? 'redirect') as Mode;
 
     handleCallback(provider, code, state)
-      .then(({ accessToken, needsJoin }) => {
+      .then(({ accessToken, needsJoin, isNewUser }) => {
         setAccessToken(accessToken);
 
         if (needsJoin) {
-          const joinParams = new URLSearchParams({ clientId, redirectUri, mode });
+          const joinParams = new URLSearchParams({ 
+            clientId, 
+            redirectUri, 
+            mode,
+            isNewUser: isNewUser.toString() 
+          });
           router.replace(`/join?${joinParams.toString()}`);
           return;
         }

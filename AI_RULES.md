@@ -19,6 +19,10 @@
     - Dark: `bg-zinc-900/90 border-white/[0.08] shadow-2xl` (고농도 배경 및 초미세 화이트 테두리)
     - **Soft Glow (Dark Mode)**: 다크 모드에서는 테두리가 튀지 않도록 `1px`의 극저농도 컬러 아웃라인(`outline: 1px solid {brandColor}15`)을 사용하여 배경의 빛이 카드 가장자리에 스며든 듯한 효과를 부여합니다.
 - **Card Standard Width**: 메인, 로그인, 회원가입 등 모든 주요 카드의 폭은 **400px**로 통합하여 데스크탑에서의 안정감과 모바일 가독성을 동시에 확보합니다.
+- **Mobile-First Responsiveness (Small Device Optimization)**:
+  - **Fluid Layout**: 소형 기기(iPhone SE 등) 대응을 위해 `PageLayout`은 `relative min-h-screen overflow-y-auto` 구조를 채택하여 콘텐츠가 길어질 경우 자연스러운 스크롤을 제공합니다.
+  - **Responsive Scaling**: 모바일 환경에서는 카드 라운드(`rounded-3xl/4xl`), 여백(`p-5/6`), 로고 크기(112px -> 80px), 폰트 크기 등을 지능적으로 축소하여 가용 화면을 최대화합니다.
+  - **Viewport Scroll**: 카드 내부의 중첩 스크롤은 지양하며, 전체 뷰포트 스크롤을 활용하여 모바일 조작감을 극대화합니다.
 - **Theme System (3-Way Mode)**:
   - **Auto (System)**, **Light**, **Dark** 3가지 모드를 지원합니다.
   - 전역 테마 상태는 `html` 클래스의 `.dark` 존재 여부로 결정되며, `localStorage`에 `theme` 키로 저장됩니다.
@@ -33,9 +37,9 @@
 
 ### 2. 표준 UI 구성 요소 (Standard UI Components)
 모든 새로운 페이지는 아래의 공통 컴포넌트를 사용하여 톤앤매너를 유지해야 합니다.
-- **PageLayout**: 배경 Orb 애니메이션, ToastContainer, ThemeToggle, 그리고 **Soft Glow 카드 시스템**이 내장된 표준 레이아웃 컨테이너.
-- **ClientLogo**: 클라이언트 브랜드 로고를 '프레임리스(Frameless)' 스타일로 렌더링하는 시네마틱 컴포넌트. 컬러 블룸 효과와 유영 애니메이션을 포함하며, `size` 조정을 통해 위계를 관리합니다. (Login: 112px, Join: 112px 권장)
-- **Typography (`Heading`, `Description`, `Badge`)**: 표준 폰트 크기, 자간(`-0.04em`), 색상 및 등장 애니메이션이 적용된 텍스트 컴포넌트.
+- **PageLayout**: 배경 Orb 애니메이션(fixed), ToastContainer, ThemeToggle, 그리고 **Soft Glow 카드 시스템**이 내장된 표준 레이아웃 컨테이너. 모바일 스크롤과 유연한 여백 시스템을 포함합니다.
+- **ClientLogo**: 클라이언트 브랜드 로고를 '프레임리스(Frameless)' 스타일로 렌더링하는 시네마틱 컴포넌트. 컬러 블룸 효과와 유영 애니메이션을 포함하며, `size` 조정을 통해 위계를 관리합니다. (Desktop: 112px, Mobile: 80px 권장)
+- **Typography (`Heading`, `Description`, `Badge`)**: 표준 폰트 크기, 자간(`-0.04em`), 색상 및 등장 애니메이션이 적용된 텍스트 컴포넌트. 모바일 대응을 위한 반응형 크기 조절이 내장되어 있습니다.
 - **Icons**: 서비스 전역에서 사용되는 2.5px 선 굵기의 표준 SVG 아이콘 라이브러리.
 - **Toast**: 화면 하단 중앙(`bottom-12`)에 나타나는 비침습적 알림 시스템.
 
@@ -55,6 +59,7 @@
 3. **약관 동의 시스템 (Consent System)**:
    - 모든 약관(이용약관, 개인정보처리방침, 제3자 제공 동의 등)은 `content/policies/` 폴더 내에 MDX 파일 형식으로 버전별 관리됩니다.
    - `src/lib/policy.ts` 유틸리티를 통해 파싱되며, `useConsentCheck` 훅과 `consentStore`를 통해 신규 가입, 서비스 최초 접근, 약관 업데이트 등의 상황을 자동 감지합니다.
+   - **Selective UI**: 회원가입(`join`) 시 `isNewUser` 상태에 따라 노출 항목을 조정하며, 단일 항목 노출 시 '모두 동의' 버튼을 자동으로 숨겨 인지 부하를 최소화합니다.
    - 약관 전문은 `/policies/[slug]` 페이지를 통해 제공되며, 사용자는 `ConsentModal` 컴포넌트를 통해 개별 약관에 대해 명시적 동의(Opt-in)를 진행합니다.
 4. **법적 책임의 분리**: 통합 서비스 내에서 개별 클라이언트 서비스 운영에 따른 책임은 각 운영자에게 있음을 명시합니다.
 
