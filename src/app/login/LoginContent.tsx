@@ -112,19 +112,19 @@ export function LoginContent() {
             initial={{ opacity: 0.5 }}
             animate={{ opacity: [0.5, 0.8, 0.5] }}
             transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-            className="w-16 h-16 rounded-[22px] bg-black/[0.06] dark:bg-white/[0.06] mb-6" 
+            className="w-16 h-16 rounded-[22px] bg-black/6 dark:bg-white/6 mb-6" 
           />
           <div className="space-y-3 w-full flex flex-col items-center mb-8">
-            <div className="h-4 w-24 bg-black/[0.04] dark:bg-white/[0.04] rounded-full" />
-            <div className="h-8 w-40 bg-black/[0.06] dark:bg-white/[0.06] rounded-xl" />
+            <div className="h-4 w-24 bg-black/4 dark:bg-white/4 rounded-full" />
+            <div className="h-8 w-40 bg-black/6 dark:bg-white/6 rounded-xl" />
           </div>
           <div className="flex flex-col gap-3 w-full">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="w-full h-14 rounded-2xl bg-black/[0.03] dark:bg-white/[0.03] relative overflow-hidden">
+              <div key={i} className="w-full h-14 rounded-2xl bg-black/3 dark:bg-white/3 relative overflow-hidden">
                 <motion.div 
                   animate={{ x: ['-100%', '100%'] }}
                   transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 dark:via-white/5 to-transparent"
+                  className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 dark:via-white/5 to-transparent"
                 />
               </div>
             ))}
@@ -170,11 +170,11 @@ export function LoginContent() {
           animate={{ opacity: 1, y: 0 }}
           className="flex flex-col items-center text-center py-4"
         >
-          <div className="w-20 h-20 rounded-[24px] bg-amber-500 flex items-center justify-center mb-6 shadow-lg shadow-amber-500/20 text-white">
+          <div className="w-20 h-20 rounded-3xl bg-amber-500 flex items-center justify-center mb-6 shadow-lg shadow-amber-500/20 text-white">
             <WarningIcon />
           </div>
           <h1 className="text-2xl font-black text-gray-900 dark:text-zinc-100 tracking-tight mb-3">서비스 연결이 필요해요</h1>
-          <p className="text-[15px] text-gray-500 dark:text-zinc-400 leading-relaxed max-w-[240px] mb-8 font-medium">
+          <p className="text-[15px] text-gray-500 dark:text-zinc-400 leading-relaxed max-w-60 mb-8 font-medium">
             올바른 서비스 링크를 통해<br />다시 접속해주시겠어요?
           </p>
           <motion.button 
@@ -231,7 +231,7 @@ export function LoginContent() {
             initial={{ opacity: 0 }} 
             animate={{ opacity: 1 }} 
             transition={{ duration: 0.4, delay: 1.5 }} 
-            className="text-center text-[11px] leading-relaxed font-semibold text-black/30 dark:text-zinc-500 max-w-[260px] mx-auto"
+            className="text-center text-[11px] leading-relaxed font-semibold text-black/30 dark:text-zinc-500 max-w-65 mx-auto"
           >
             로그인 시 빵돌이 통합{' '}
             <span className="hover:text-black/60 dark:hover:text-zinc-300 transition-colors cursor-pointer underline underline-offset-4 decoration-black/10 dark:decoration-white/10">이용약관</span>
