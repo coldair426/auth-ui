@@ -1,5 +1,6 @@
 import { CallbackResponse, Mode, Provider } from '@/types';
 import api from './instance';
+import { MOCK_AUTH } from './mock';
 
 export function getSocialLoginUrl(
   provider: Provider,
@@ -7,6 +8,11 @@ export function getSocialLoginUrl(
   redirectUri: string,
   mode: Mode,
 ): Promise<{ url: string }> {
+  if (process.env.NODE_ENV === 'development') {
+    return Promise.resolve({ 
+      url: MOCK_AUTH.getLoginUrl(provider, redirectUri, mode) 
+    });
+  }
   return api
     .get(`/auth/${provider}/url`, { params: { clientId, redirectUri, mode } })
     .then((res) => res.data);
@@ -17,12 +23,20 @@ export function handleCallback(
   code: string,
   state: string,
 ): Promise<CallbackResponse> {
+  if (process.env.NODE_ENV === 'development') {
+    // 로컬 테스트 시 세션 스토리지 등을 활용해 join이 필요한지 여부를 제어할 수 있습니다.
+    const forceJoin = sessionStorage.getItem('dev_force_join') === 'true';
+    return Promise.resolve(MOCK_AUTH.getCallbackResponse(forceJoin));
+  }
   return api
     .post(`/auth/${provider}/callback`, { code, state })
     .then((res) => res.data);
 }
 
 export function joinProject(clientId: string): Promise<void> {
+  if (process.env.NODE_ENV === 'development') {
+    return Promise.resolve();
+  }
   return api.post('/auth/join', { clientId }).then(() => undefined);
 }
 

@@ -1,9 +1,10 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ReactNode } from 'react';
+import { ReactNode, useMemo } from 'react';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { ToastContainer } from '@/components/ui/Toast';
+import { isLightColor } from '@/lib/utils/color';
 
 interface PageLayoutProps {
   children: ReactNode;
@@ -26,9 +27,11 @@ export function PageLayout({
   to = '#F59E0B',
   width = 360,
 }: PageLayoutProps) {
+  const isBackgroundLight = useMemo(() => isLightColor(from), [from]);
+
   return (
     <main 
-      className="fixed inset-0 overflow-hidden bg-[#fdfdfd] dark:bg-[#050505] transition-colors duration-1000 flex flex-col items-center justify-center p-4 md:p-6"
+      className={`fixed inset-0 overflow-hidden bg-[#fdfdfd] dark:bg-[#050505] transition-colors duration-1000 flex flex-col items-center justify-center p-4 md:p-6 ${isBackgroundLight ? 'light-brand' : ''}`}
       style={{ '--client-primary': from } as any}
     >
       {/* 전역 알림 컨테이너 */}

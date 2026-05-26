@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import HomeContent from './HomeContent';
 
 export const metadata: Metadata = {
-  title: '빵돌이 통합 인증 - 모든 서비스의 시작',
+  title: '빵돌이 통합 인증',
   description: '어디서나 간편하게, 당신의 계정을 하나로 통합하세요. 빵돌이 통합 인증은 안전하고 빠른 로그인을 지원합니다.',
   keywords: ['빵돌이', '통합인증', '로그인', 'SSO', 'Breadkun', '인증서비스'],
   alternates: {

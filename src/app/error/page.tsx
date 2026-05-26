@@ -2,9 +2,12 @@
 
 import { Button } from '@/components/ui/Button';
 import { PageLayout } from '@/components/ui/PageLayout';
+import { getClientInfo } from '@/lib/api/account';
+import { MOCK_CLIENT_ID } from '@/lib/api/mock';
+import { OAuthClient } from '@/types';
 import { motion } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Suspense } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 
 const ERROR_MESSAGES: Record<string, { title: string; desc: string }> = {
   INVALID_CLIENT: {
@@ -27,8 +30,22 @@ function ErrorContent() {
   const code = searchParams.get('code') ?? 'DEFAULT';
   const { title, desc } = ERROR_MESSAGES[code] || ERROR_MESSAGES.DEFAULT;
 
+  const isDev = process.env.NODE_ENV === 'development';
+  const clientId = searchParams.get('clientId') || (isDev ? MOCK_CLIENT_ID : null);
+
+  const [client, setClient] = useState<OAuthClient | null>(null);
+
+  useEffect(() => {
+    if (clientId) {
+      getClientInfo(clientId).then(setClient).catch(() => {});
+    }
+  }, [clientId]);
+
+  const from = client?.gradientFrom ?? '#EF4444';
+  const to = client?.gradientTo ?? '#B91C1C';
+
   return (
-    <PageLayout from="#EF4444" to="#B91C1C" width={360}>
+    <PageLayout from={from} to={to} width={360}>
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ 
@@ -54,8 +71,11 @@ function ErrorContent() {
         <Button 
           variant="primary" 
           fullWidth 
-          onClick={() => router.replace('/login')}
-          className="h-14 rounded-2xl bg-red-600 hover:bg-red-700 text-white shadow-xl shadow-red-600/20"
+          onClick={() => {
+            const loginUrl = clientId ? `/login?clientId=${clientId}` : '/login';
+            router.replace(loginUrl);
+          }}
+          className="h-14 rounded-2xl bg-gray-900 dark:bg-zinc-100 text-white dark:text-black hover:bg-gray-800 dark:hover:bg-zinc-200 shadow-xl"
         >
           로그인으로 돌아가기
         </Button>

@@ -6,9 +6,10 @@ export interface OAuthClient {
   clientId: string;
   name: string;
   logoUrl: string | null;
+  faviconUrl: string | null;
   gradientFrom: string;
   gradientTo: string;
-  textDark: boolean;
+  textDark?: boolean;
   allowedModes: Mode[];
 }
 
@@ -22,18 +23,6 @@ export interface CallbackResponse {
   accessToken: string;
   needsJoin: boolean;
   isNewUser: boolean;
-}
-
-export interface SocialAccount {
-  provider: Provider;
-  connectedAt: string;
-}
-
-export interface User {
-  id: string;
-  email: string;
-  name: string;
-  socialAccounts: SocialAccount[];
 }
 
 export interface ApiError {

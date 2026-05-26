@@ -7,18 +7,18 @@ import { getSocialLoginUrl } from '@/lib/api/auth';
 import { useAuthStore } from '@/store/authStore';
 import { Mode, OAuthClient, Provider } from '@/types';
 import { motion } from 'framer-motion';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 const PROVIDERS: Provider[] = ['naver', 'kakao', 'google'];
 
 const FALLBACK_CLIENT: OAuthClient = {
   clientId: '',
-  name: '빵돌이 통합 인증',
-  logoUrl: '/logo.webp',
-  gradientFrom: '#D97706',
-  gradientTo: '#F59E0B',
-  textDark: false,
+  name: '피쉬하이',
+  logoUrl: '/fishhi-logo.png',
+  faviconUrl: '/fishhi-favicon.png',
+  gradientFrom: '#A4E1F1',
+  gradientTo: '#3FA9F5',
   allowedModes: ['redirect', 'popup'],
 };
 
@@ -41,12 +41,16 @@ function LockIcon() {
   );
 }
 
+import { MOCK_CLIENT_ID } from '@/lib/api/mock';
+
 export function LoginContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const { setClientInfo } = useAuthStore();
 
-  const clientId = searchParams.get('clientId');
-  const redirectUri = searchParams.get('redirectUri') ?? '';
+  const isDev = process.env.NODE_ENV === 'development';
+  const clientId = searchParams.get('clientId') || (isDev ? MOCK_CLIENT_ID : null);
+  const redirectUri = searchParams.get('redirectUri') ?? (isDev ? 'http://localhost:4000/callback' : '');
   const mode = (searchParams.get('mode') ?? 'redirect') as Mode;
 
   const isInvalid = !clientId;
@@ -55,6 +59,7 @@ export function LoginContent() {
   const [clientStatus, setClientStatus] = useState<'loading' | 'loaded' | 'error'>(
     () => (clientId ? 'loading' : 'loaded'),
   );
+
   const [retryKey, setRetryKey] = useState(0);
   const [loadingProvider, setLoadingProvider] = useState<Provider | null>(null);
   const [isExiting, setIsExiting] = useState(false);
@@ -69,22 +74,6 @@ export function LoginContent() {
         setClientStatus('loaded');
       })
       .catch(() => {
-        if (process.env.NODE_ENV === 'development') {
-          console.warn('[Dev Mock] 서비스 정보 API 호출 실패: 테스트 데이터를 로드합니다.');
-          const mockClient: OAuthClient = {
-            clientId,
-            name: 'Unified Auth',
-            logoUrl: null,
-            gradientFrom: '#4F46E5',
-            gradientTo: '#7C3AED',
-            textDark: false,
-            allowedModes: ['redirect', 'popup'],
-          };
-          setClient(mockClient);
-          setClientInfo(mockClient);
-          setClientStatus('loaded');
-          return;
-        }
         setClientStatus('error');
       });
   }, [clientId, setClientInfo, retryKey]);
@@ -104,6 +93,7 @@ export function LoginContent() {
       }, 400);
     } catch {
       setLoadingProvider(null);
+      router.push(`/error?code=LOGIN_FAILED&clientId=${clientId}`);
     }
   }
 
@@ -223,8 +213,8 @@ export function LoginContent() {
                 <span className="text-white text-2xl font-black relative z-10 tracking-tight">{client.name[0]}</span>
               )}
             </motion.div>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4, delay: 0.85 }} className="px-2.5 py-0.5 rounded-full bg-black/[0.04] dark:bg-white/5 mb-2">
-              <p className="text-[10px] font-bold text-black/50 dark:text-white/40 tracking-widest uppercase">{client.name}</p>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4, delay: 0.85 }} className="px-2.5 py-0.5 rounded-full bg-black/[0.04] dark:bg-white/5 mb-2 border border-black/[0.03] dark:border-white/5">
+              <p className="text-[10px] font-bold text-black/40 dark:text-white/40 tracking-widest uppercase">{client.name}</p>
             </motion.div>
             <motion.h1 initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.9 }} className="text-[26px] font-black text-gray-900 dark:text-zinc-100 tracking-tight">반가워요!</motion.h1>
           </div>
@@ -240,11 +230,11 @@ export function LoginContent() {
           </div>
 
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4, delay: 1.4 }} className="text-center text-[11px] font-medium text-black/25 dark:text-white/20 flex items-center justify-center gap-1.5">
-            로그인 시{' '}
+            로그인 시 빵돌이 통합{' '}
             <span className="hover:text-black/60 dark:hover:text-white/50 transition-colors cursor-pointer underline underline-offset-2 decoration-black/10">이용약관</span>
             {' '}&{' '}
             <span className="hover:text-black/60 dark:hover:text-white/50 transition-colors cursor-pointer underline underline-offset-2 decoration-black/10">개인정보처리방침</span>
-            에 동의합니다.
+            에 동의하게 됩니다.
           </motion.div>
         </>
       )}

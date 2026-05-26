@@ -21,10 +21,12 @@
   - **Auto (System)**, **Light**, **Dark** 3가지 모드를 지원합니다.
   - 전역 테마 상태는 `html` 클래스의 `.dark` 존재 여부로 결정되며, `localStorage`에 `theme` 키로 저장됩니다.
   - **ThemeToggle**: 카드 내부 우측 상단(`absolute top-6 right-6`)에 위치하며, 아이콘 중심의 미니멀한 디자인을 유지합니다.
-- **Dynamic Branding (Automatic Compensation)**:
-  - 클라이언트가 제공하는 `gradientFrom/To` 색상은 라이트/다크 모드에 따라 시스템이 자동으로 최적화합니다.
-  - **Light Mode**: `mix-blend-multiply`, `opacity-60` 적용.
-  - **Dark Mode**: `mix-blend-normal`, `opacity-30` 내외로 자동 감쇄.
+- **Dynamic Branding (Automatic Contrast & Compensation)**:
+  - **Auto Contrast**: `isLightColor()` 유틸리티를 사용하여 배경색의 밝기를 분석하고, `.light-brand` 클래스를 통해 텍스트 색상을 자동으로 최적화합니다.
+  - 클라이언트가 제공하는 `gradientFrom/To` 색상은 라이트/다크 모드에 따라 시스템이 자동으로 최적화합니다. (Light: `mix-blend-multiply`, Dark: `mix-blend-normal`)
+  - **Error Page Integration**: 에러 페이지(`src/app/error/page.tsx`) 또한 `clientId`를 전달받아 해당 클라이언트의 테마 색상을 유지하며, 사용자에게 일관된 브랜딩 경험을 제공합니다.
+- **Independent Asset Management**:
+  - 로고(`logoUrl`)와 파비콘(`faviconUrl`)은 독립적으로 관리됩니다. 탭 아이콘 설정 시 `faviconUrl`을 최우선으로 하며, 없을 경우에만 `logoUrl`을 폴백으로 사용합니다.
 - **Cinematic Texture**: 화면 전역에 `opacity-[0.03]` 수준의 필름 그레인(Grain) 오버레이를 적용하여 아날로그적인 질감 부여.
 
 ### 2. 표준 UI 구성 요소 (Standard UI Components)
@@ -47,13 +49,17 @@
 
 1. **조직 명칭**: 모든 공식 문서 및 UI에서 **"Team Breadkun"** 명칭을 사용합니다.
 2. **중앙 집중형 회원 관리**: 모든 사용자 정보는 통합 인증 서버에서 관리하며, 개별 프로젝트는 고유 ID만 보유합니다.
-3. **법적 책임의 분리**: `/join` 페이지를 통해 서비스 이용 책임이 개별 운영자에게 있음을 명시합니다.
+3. **통합 약관 원칙 (Unified Terms)**: 개별 프로젝트별 약관을 작성하지 않고, **"빵돌이 통합 서비스 이용약관"**을 공통으로 사용합니다. 
+   - 사용자는 빵돌이 계정을 생성하는 시점에 통합 약관에 동의합니다.
+   - 개별 서비스 연결 시에는 해당 서비스로의 **"정보 제공 동의"** 프로세스만 거칩니다.
+4. **법적 책임의 분리**: `/join` 페이지를 통해 서비스 이용 책임이 개별 운영자에게 있음을 명시합니다.
 
 ---
 
 ## 📂 아키텍처 및 기술 설계
 - **Next.js 16 (App Router)**: 최신 컨벤션 준수.
-- **PageLayout Component**: `src/components/ui/PageLayout.tsx`는 배경 및 컨테이너 로직을 통합 관리합니다.
+- **Mocking Strategy**: `src/lib/api/mock.ts`를 통해 로컬 환경의 독립적인 테스트 데이터를 관리하며, `NODE_ENV` 조건절을 통해 배포 환경과 완벽히 격리합니다. 모든 주요 페이지(`/login`, `/join`, `/callback`, `/error`)는 로컬 개발 시 `MOCK_CLIENT_ID`를 폴백으로 사용하여 백엔드 없이도 전체 인증 플로우를 테스트할 수 있어야 합니다.
+- **PageLayout Component**: `src/components/ui/PageLayout.tsx`는 배경, 자동 대비 로직, 컨테이너를 통합 관리합니다.
 - **Toast System**: `src/components/ui/Toast.tsx`를 통한 전역 상태 비의존적 알림 처리.
 
 ---

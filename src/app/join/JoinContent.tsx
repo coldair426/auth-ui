@@ -10,13 +10,16 @@ import { motion } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
+import { MOCK_CLIENT_ID } from '@/lib/api/mock';
+
 export function JoinContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { clientInfo: storedClientInfo, setClientInfo } = useAuthStore();
 
-  const clientId = searchParams.get('clientId') ?? '';
-  const redirectUri = searchParams.get('redirectUri') ?? '';
+  const isDev = process.env.NODE_ENV === 'development';
+  const clientId = searchParams.get('clientId') || (isDev ? MOCK_CLIENT_ID : null);
+  const redirectUri = searchParams.get('redirectUri') ?? (isDev ? 'http://localhost:4000/callback' : '');
   const mode = (searchParams.get('mode') ?? 'redirect') as Mode;
 
   const [client, setClient] = useState<OAuthClient | null>(storedClientInfo);
@@ -36,22 +39,7 @@ export function JoinContent() {
         setClientInfo(info);
       })
       .catch(() => {
-        if (process.env.NODE_ENV === 'development') {
-          console.warn('[Dev Mock] 서비스 정보 API 호출 실패: 테스트 데이터를 로드합니다.');
-          const mockClient: OAuthClient = {
-            clientId,
-            name: 'Unified Auth',
-            logoUrl: null,
-            gradientFrom: '#4F46E5',
-            gradientTo: '#7C3AED',
-            textDark: false,
-            allowedModes: ['redirect', 'popup'],
-          };
-          setClient(mockClient);
-          setClientInfo(mockClient);
-          return;
-        }
-        router.replace('/error?code=INVALID_CLIENT');
+        router.replace(`/error?code=INVALID_CLIENT&clientId=${clientId}`);
       });
   }, [clientId, router, storedClientInfo, setClientInfo]);
 
@@ -163,8 +151,8 @@ export function JoinContent() {
           }}
           className={`text-center text-[16px] font-medium leading-relaxed mb-8 ${descColor} tracking-tight`}
         >
-          처음 방문하셨네요.<br />
-          빵돌이 통합 계정으로 <span className="font-bold text-amber-600/90 dark:text-amber-500/90">{client.name}</span>에<br />연동하고 서비스를 이용해보세요.
+          반가워요! <b>빵돌이 통합 계정</b>을 만들어<br />
+          <span className="font-bold text-amber-600/90 dark:text-amber-500/90">{client.name}</span> 연동을 시작할까요?
         </motion.p>
 
         {/* Disclaimer Box */}
@@ -176,20 +164,20 @@ export function JoinContent() {
           className={`w-full mb-10 overflow-hidden rounded-[28px] border ${disclaimerClasses} backdrop-blur-sm p-6`}
         >
           <p className={`mb-3 font-bold text-[13px] tracking-tight ${titleColor} opacity-90`}>
-            안내 및 면책 조항
+            이용 약관 및 정보 제공 동의
           </p>
           <ul className={`space-y-2.5 text-[12.5px] font-medium leading-relaxed ${descColor}`}>
             <li className="flex gap-2.5">
               <span className="shrink-0 text-amber-600/50 dark:text-amber-500/50 mt-1">•</span>
-              <span>본 서비스는 빵돌이 통합 인증 시스템을 사용합니다.</span>
+              <span><b>빵돌이 통합 이용약관</b> 및 <b>개인정보 처리방침</b>에 동의하게 됩니다.</span>
             </li>
             <li className="flex gap-2.5">
               <span className="shrink-0 text-amber-600/50 dark:text-amber-500/50 mt-1">•</span>
-              <span>인증 시 소셜 서비스의 약관 및 정책이 적용됩니다.</span>
+              <span>인증 완료 시, 서비스 이용을 위해 최소한의 프로필 정보가 <b className="text-amber-600/80 dark:text-amber-500/80">{client.name}</b> 측에 전달됩니다.</span>
             </li>
             <li className="flex gap-2.5">
               <span className="shrink-0 text-amber-600/50 dark:text-amber-500/50 mt-1">•</span>
-              <span>서비스 이용 중 발생하는 모든 활동 및 데이터 관리에 대한 책임은 <b className="text-amber-600/80 dark:text-amber-500/80">{client.name}</b> 운영자에게 있습니다.</span>
+              <span>서비스 내부의 개별 정책 및 데이터 관리는 해당 운영자의 책임하에 운영됩니다.</span>
             </li>
           </ul>
         </motion.div>

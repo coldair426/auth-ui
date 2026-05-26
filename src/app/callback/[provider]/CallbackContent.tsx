@@ -7,6 +7,8 @@ import { motion } from 'framer-motion';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 
+import { MOCK_CLIENT_ID } from '@/lib/api/mock';
+
 export function CallbackContent() {
   const params = useParams();
   const searchParams = useSearchParams();
@@ -17,14 +19,16 @@ export function CallbackContent() {
   const code = searchParams.get('code') ?? '';
   const state = searchParams.get('state') ?? '';
 
+  const isDev = process.env.NODE_ENV === 'development';
+
   useEffect(() => {
     if (!code || !state) {
       router.replace('/error?code=INVALID_CALLBACK');
       return;
     }
 
-    const clientId = sessionStorage.getItem('auth_clientId') ?? '';
-    const redirectUri = sessionStorage.getItem('auth_redirectUri') ?? '';
+    const clientId = sessionStorage.getItem('auth_clientId') || (isDev ? MOCK_CLIENT_ID : '');
+    const redirectUri = sessionStorage.getItem('auth_redirectUri') ?? (isDev ? 'http://localhost:4000/callback' : '');
     const mode = (sessionStorage.getItem('auth_mode') ?? 'redirect') as Mode;
 
     handleCallback(provider, code, state)

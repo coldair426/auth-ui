@@ -53,3 +53,21 @@ body {
   from { background-position: 0% 50%; }
   to { background-position: 100% 50%; }
 }
+
+/* ── Light Brand Strategy ── */
+/* 배경이 매우 밝은 색상일 때 강제로 라이트 모드 느낌의 가독성을 확보합니다. */
+.light-brand {
+  /* 배경이 밝을 때 글자는 어둡게 */
+  --foreground: #171717;
+}
+
+.light-brand h1, 
+.light-brand p,
+.light-brand span:not([class*="bg-"]):not([class*="text-"]) {
+  color: #1a1a1a !important;
+}
+
+.light-brand .dark-theme-card {
+  background-color: rgba(255, 255, 255, 0.75) !important;
+  border-color: rgba(0, 0, 0, 0.05) !important;
+}

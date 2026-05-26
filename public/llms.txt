@@ -12,7 +12,6 @@ Integrated Authentication (SSO) service for the BREADKUN ecosystem and partner p
 - [Main Landing Page](https://auth.breadkun.com/)
 - [Login Service](https://auth.breadkun.com/login)
 - [Member Registration](https://auth.breadkun.com/join)
-- [Account Connections](https://auth.breadkun.com/settings/connections)
 
 ## Technical Stack
 - Next.js 16 (App Router)
