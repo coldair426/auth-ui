@@ -1,4 +1,5 @@
 import { OAuthClient, Provider, Mode, CallbackResponse } from '@/types';
+import type { UserConsent } from '@/types/consent';
 
 export const MOCK_CLIENT_ID = '77777777-7777-7777-7777-777777777777';
 
@@ -27,3 +28,6 @@ export const MOCK_AUTH = {
     isNewUser: needsJoin,
   }),
 };
+
+// 동의 이력 없음 (신규 유저 시뮬레이션)
+export const MOCK_USER_CONSENTS: UserConsent[] = [];

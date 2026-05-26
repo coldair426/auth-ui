@@ -142,8 +142,8 @@ export function JoinContent() {
             <li className="flex gap-2.5">
               <span className="shrink-0 text-black/20 dark:text-white/20 mt-1">•</span>
               <span>
-                <NextLink href="/terms" className="underline underline-offset-2 hover:text-black dark:hover:text-white transition-colors">빵돌이 통합 이용약관</NextLink> 및{' '}
-                <NextLink href="/privacy" className="underline underline-offset-2 hover:text-black dark:hover:text-white transition-colors">개인정보 처리방침</NextLink>에 동의하게 됩니다.
+                <NextLink href="/policies/terms-of-service" target="_blank" className="underline underline-offset-2 hover:text-black dark:hover:text-white transition-colors">빵돌이 통합 이용약관</NextLink> 및{' '}
+                <NextLink href="/policies/privacy-policy" target="_blank" className="underline underline-offset-2 hover:text-black dark:hover:text-white transition-colors">개인정보 처리방침</NextLink>에 동의하게 됩니다.
               </span>
             </li>
             <li className="flex gap-2.5">
