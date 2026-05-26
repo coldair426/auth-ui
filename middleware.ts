@@ -45,7 +45,6 @@ export const config = {
      * - api (API routes)
      * - _next/static (static files)
      * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
      * - login (login page)
      * - join (join page)
      * - callback (auth callback pages)
@@ -53,7 +52,8 @@ export const config = {
      * - policies (policy pages)
      * - error (error pages)
      * - root path (/)
+     * - all files with an extension (e.g., .webp, .png, .ico, .txt)
      */
-    '/((?!api|_next/static|_next/image|favicon.ico|login|join|callback|consent|policies|error|$).*)',
+    '/((?!api|_next/static|_next/image|login|join|callback|consent|policies|error|$|.*\\.[\\w]+$).*)',
   ],
 };
