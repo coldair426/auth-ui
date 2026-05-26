@@ -33,8 +33,13 @@ export function PageLayout({
       {/* 전역 알림 컨테이너 */}
       <ToastContainer />
 
-      {/* Cinematic Grain Overlay */}
-      <div className="fixed inset-0 z-[1] pointer-events-none opacity-[0.03] dark:opacity-[0.05] bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+      {/* Cinematic Grain Overlay - Inline SVG to avoid 404 */}
+      <div 
+        className="fixed inset-0 z-[1] pointer-events-none opacity-[0.15] dark:opacity-[0.2] mix-blend-overlay" 
+        style={{ 
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` 
+        }}
+      />
 
       {/* 배경 Orb 애니메이션 */}
       <motion.div

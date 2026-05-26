@@ -36,7 +36,14 @@ export default function HomeContent() {
         >
           <motion.div animate={{ y: [0, -8, 0] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }} className="w-full h-full relative">
             <div className="absolute inset-0 bg-amber-500/30 blur-3xl rounded-full" />
-            <Image src="/logo.webp" alt="빵돌이 로고" fill className="object-contain relative z-10 drop-shadow-2xl" priority />
+            <Image 
+              src="/logo.webp" 
+              alt="빵돌이 로고" 
+              fill 
+              sizes="(max-width: 768px) 80px, 104px"
+              className="object-contain relative z-10 drop-shadow-2xl" 
+              priority 
+            />
           </motion.div>
         </motion.div>
 
