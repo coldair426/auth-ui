@@ -30,7 +30,23 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: background-color 1s cubic-bezier(0.22, 1, 0.36, 1), color 0.5s ease;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 모바일(특히 Samsung Internet) 컴포지터 안정화 - 깜빡임 방지 */
+@media (max-width: 767px) {
+  body {
+    transition: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 

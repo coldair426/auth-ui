@@ -18,28 +18,10 @@ const accentColors: Record<Provider, string> = {
   google: '#4285F4',
 };
 
-const tintColors: Record<Provider, string> = {
-  naver: 'rgba(3, 199, 90, 0.08)',
-  kakao: 'rgba(254, 229, 0, 0.12)',
-  google: 'rgba(66, 133, 244, 0.08)',
-};
-
-const darkTintColors: Record<Provider, string> = {
-  naver: 'rgba(3, 199, 90, 0.15)',
-  kakao: 'rgba(254, 229, 0, 0.18)',
-  google: 'rgba(66, 133, 244, 0.15)',
-};
-
-const hoverTintColors: Record<Provider, string> = {
-  naver: 'rgba(3, 199, 90, 0.14)',
-  kakao: 'rgba(254, 229, 0, 0.2)',
-  google: 'rgba(66, 133, 244, 0.14)',
-};
-
-const hoverDarkTintColors: Record<Provider, string> = {
-  naver: 'rgba(3, 199, 90, 0.25)',
-  kakao: 'rgba(254, 229, 0, 0.3)',
-  google: 'rgba(66, 133, 244, 0.25)',
+const tintClasses: Record<Provider, string> = {
+  naver: 'bg-[rgba(3,199,90,0.08)] hover:bg-[rgba(3,199,90,0.14)] dark:bg-[rgba(3,199,90,0.15)] dark:hover:bg-[rgba(3,199,90,0.25)]',
+  kakao: 'bg-[rgba(254,229,0,0.12)] hover:bg-[rgba(254,229,0,0.2)] dark:bg-[rgba(254,229,0,0.18)] dark:hover:bg-[rgba(254,229,0,0.3)]',
+  google: 'bg-[rgba(66,133,244,0.08)] hover:bg-[rgba(66,133,244,0.14)] dark:bg-[rgba(66,133,244,0.15)] dark:hover:bg-[rgba(66,133,244,0.25)]',
 };
 
 const providerConfig: Record<Provider, { label: string; ariaLabel: string; icon: React.ReactNode }> = {
@@ -110,33 +92,12 @@ export function SocialLoginButton({
       onClick={handleClick}
       disabled={disabled || isLoading || isDimmed}
       aria-label={config.ariaLabel}
-      className={`relative w-full h-14 overflow-hidden flex items-center gap-3.5 text-[15px] font-bold tracking-tight transition-all duration-300 ${
+      className={`relative w-full h-14 overflow-hidden flex items-center gap-3.5 text-[15px] font-bold tracking-tight transition-all duration-300 rounded-2xl px-5 border border-black/[0.06] dark:border-white/[0.08] text-gray-800 dark:text-zinc-100 ${tintClasses[provider]} ${
         isDimmed ? 'opacity-30 pointer-events-none' : 'opacity-100'
       } ${
         disabled || isLoading || isDimmed ? 'cursor-not-allowed' : 'cursor-pointer'
-      } text-gray-800 dark:text-zinc-100`}
-      style={{
-        backgroundColor: isHovered && !isLoading 
-          ? `var(--btn-hover-bg, ${hoverTintColors[provider]})` 
-          : `var(--btn-bg, ${tintColors[provider]})`,
-        border: '1px solid rgba(0,0,0,0.06)',
-        borderRadius: '1rem',
-        padding: '0 20px',
-      }}
+      }`}
     >
-      <style jsx>{`
-        button {
-          --btn-bg: ${tintColors[provider]};
-          --btn-hover-bg: ${hoverTintColors[provider]};
-        }
-        @media (prefers-color-scheme: dark) {
-          button {
-            --btn-bg: ${darkTintColors[provider]};
-            --btn-hover-bg: ${hoverDarkTintColors[provider]};
-            border-color: rgba(255, 255, 255, 0.08) !important;
-          }
-        }
-      `}</style>
       {/* 브랜드 컬러 accent bar */}
       <motion.span
         initial={{ scaleY: 0, opacity: 0 }}
