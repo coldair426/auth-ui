@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import { getClientInfo } from '@/lib/api/account';
-import { OAuthClient, Mode } from '@/types';
+import { OAuthClient } from '@/types';
 import { MOCK_CLIENT_ID } from '@/lib/api/mock';
 
 export interface UseClientInfoResult {
@@ -11,7 +11,6 @@ export interface UseClientInfoResult {
   isLoading: boolean;
   error: string | null;
   redirectUri: string;
-  mode: Mode;
 }
 
 export function useClientInfo(): UseClientInfoResult {
@@ -23,9 +22,6 @@ export function useClientInfo(): UseClientInfoResult {
   const isDev = process.env.NODE_ENV === 'development';
   const clientId = searchParams.get('clientId') || (isDev ? MOCK_CLIENT_ID : null);
   const redirectUri = searchParams.get('redirectUri') ?? (isDev ? 'http://localhost:4000/callback' : '');
-  const rawMode = searchParams.get('mode') ?? 'redirect';
-  const isValidModeParam = rawMode === 'redirect' || rawMode === 'popup';
-  const mode = (isValidModeParam ? rawMode : 'redirect') as Mode;
 
   const hasValidClient = !!(storedClientInfo && storedClientInfo.clientId === clientId);
 
@@ -40,19 +36,7 @@ export function useClientInfo(): UseClientInfoResult {
       return;
     }
 
-    if (!isValidModeParam) {
-      setError('INVALID_MODE');
-      router.replace(`/error?code=INVALID_MODE&clientId=${clientId}`);
-      return;
-    }
-
     if (hasValidClient) {
-      if (!storedClientInfo.allowedModes.includes(mode)) {
-        setError('INVALID_MODE');
-        router.replace(`/error?code=INVALID_MODE&clientId=${clientId}`);
-        return;
-      }
-
       setIsLoading(false);
       return;
     }
@@ -66,12 +50,6 @@ export function useClientInfo(): UseClientInfoResult {
     getClientInfo(clientId)
       .then((info) => {
         if (!isMounted) return;
-
-        if (!info.allowedModes.includes(mode)) {
-          setError('INVALID_MODE');
-          router.replace(`/error?code=INVALID_MODE&clientId=${clientId}`);
-          return;
-        }
 
         setClientInfo(info);
         setError(null);
@@ -89,7 +67,7 @@ export function useClientInfo(): UseClientInfoResult {
       isMounted = false;
     };
     /* eslint-enable react-hooks/set-state-in-effect */
-  }, [clientId, hasValidClient, isValidModeParam, mode, router, setClientInfo, storedClientInfo]);
+  }, [clientId, hasValidClient, router, setClientInfo]);
 
   return {
     clientId,
@@ -97,6 +75,5 @@ export function useClientInfo(): UseClientInfoResult {
     isLoading,
     error,
     redirectUri,
-    mode,
   };
 }

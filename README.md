@@ -29,17 +29,23 @@
 https://auth.breadkun.com/login?clientId={MY_CLIENT_ID}&redirectUri={MY_REDIRECT_URI}&mode=redirect
 ```
 
+현재 서비스는 `redirect` 단일 인증 흐름만 지원합니다. 로그인, 콜백, 가입 동의 완료 후 모두 `redirectUri`로 복귀합니다.
+
 ### 2. 로컬 개발 및 통합 목업 전략 (Unified API & Mock Strategy)
 개발 환경(`yarn dev`)에서는 실제 백엔드 의존성 없이도 전체 인증 라이프사이클을 테스트할 수 있는 **Unified API & Mock** 전략을 사용합니다.
 - **통합 관리**: 실제 API 호출과 Mock 데이터 반환 로직이 동일한 함수 내에서 `NODE_ENV`에 따라 자동으로 분기됩니다.
 - **자동 동기화**: `src/lib/api/mock.ts`에서 데이터를 수정하면 UI(로고, 색상)뿐만 아니라 브라우저 탭 정보(메타데이터)까지 실시간으로 반영됩니다.
 - **피쉬하이(Fishhi) 브랜딩**: 기본 개발용 목업으로 시원한 하늘색 테마와 물고기 로고가 적용된 피쉬하이 환경을 제공합니다.
 - **Zero-Manual-Switching**: 별도의 코드 수정 없이 운영 배포 시에는 자동으로 실제 API 엔드포인트로 전환됩니다.
+- **가입 시나리오 제어**: 로컬에서는 `sessionStorage`의 `dev_force_join`, `dev_is_new_user` 값을 이용해 콜백 이후 가입 동의 진입 여부와 신규/기존 유저 상태를 재현할 수 있습니다.
 
 ### 3. MDX 기반 동의 시스템 (Consent System)
 모든 정책(이용약관, 개인정보처리방침 등)은 `content/policies/` 내에 MDX 형식으로 버전별로 관리됩니다.
 - **자동 감지**: `useConsentCheck` 훅을 통해 신규 가입, 약관 개정, 신규 서비스 접근 시 동의 모달이 즉각 트리거됩니다.
 - **미들웨어 보안**: Next.js Edge Middleware를 통해 인증 토큰을 검증하고, 유효하지 않은 접근을 차단합니다.
+
+### 4. 최근 로그인 소셜 표시
+`/login`은 `clientId`별로 마지막에 선택한 소셜 로그인 제공자를 `localStorage`에 저장하고, 다음 진입 시 해당 버튼에 최근 로그인 배지를 노출합니다. 배지 색상은 클라이언트의 시그니처 컬러(`gradientFrom`)를 기준으로 자동 보정됩니다.
 
 ---
 
@@ -80,3 +86,12 @@ cp .env.example .env.local
 # 3. 개발 서버 실행
 yarn dev
 ```
+
+Mock 기반 로컬 확인 예시:
+
+```js
+sessionStorage.setItem('dev_force_join', 'true')
+sessionStorage.setItem('dev_is_new_user', 'true')
+```
+
+이후 `/login?clientId={MOCK_CLIENT_ID}`에서 로그인하면 콜백 뒤 `/join` 플로우까지 확인할 수 있습니다.

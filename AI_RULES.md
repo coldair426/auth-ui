@@ -64,6 +64,10 @@
    - **Selective UI**: 회원가입(`join`) 시 `isNewUser` 상태에 따라 노출 항목을 조정하며, 단일 항목 노출 시 '모두 동의' 버튼을 자동으로 숨겨 인지 부하를 최소화합니다. 파라미터가 없을 경우 기본적으로 신규 유저(`true`)로 간주하여 모든 필수 약관을 노출합니다.
    - 약관 전문은 `/policies/[slug]` 페이지를 통해 제공되며, 사용자는 `ConsentModal` 컴포넌트를 통해 개별 약관에 대해 명시적 동의(Opt-in)를 진행합니다.
 4. **법적 책임의 분리**: 통합 서비스 내에서 개별 클라이언트 서비스 운영에 따른 책임은 각 운영자에게 있음을 명시합니다.
+5. **인증 흐름 단순화 (Redirect Only)**:
+   - 웹 인증 UX는 `redirect` 단일 모드만 지원합니다.
+   - `/login`, `/callback/[provider]`, `/join`은 모두 `redirectUri`를 기준으로 연결됩니다.
+   - popup 전용 분기나 opener 통신은 두지 않습니다.
 
 ---
 
@@ -78,9 +82,13 @@
   - **Environment Branching**: `if (process.env.NODE_ENV === 'development')` 조건절을 사용하여 개발 환경에서는 `src/lib/api/mock.ts`의 데이터를 반환하고, 운영 환경에서는 실제 `api` 인스턴스를 사용합니다.
   - **Zero-Manual-Switching**: 환경 변수나 코드의 수동 변경 없이, 빌드 환경에 따라 자동으로 동작을 전환하는 것을 원칙으로 합니다.
   - **Metadata Integration**: 페이지의 `generateMetadata` 또한 공통 API 함수를 사용하여 UI와 브라우저 탭 정보(제목, 파비콘)가 항상 Mock 데이터와 동기화되도록 합니다.
+  - **Redirect Flow Mocking**: 로컬에서는 `sessionStorage`의 `dev_force_join`, `dev_is_new_user`를 통해 callback 이후 가입 플로우를 재현합니다.
 - **Mocking Data**: `src/lib/api/mock.ts`는 시스템의 유일한 가짜 데이터 소스(Single Source of Truth)이며, 로컬 개발 시 백엔드 없이도 전체 인증 플로우(로그인, 회원가입, 토큰 갱신, 동의 처리)를 완벽히 재현할 수 있어야 합니다.
 - **PageLayout Component**: `src/components/ui/PageLayout.tsx`는 배경, 자동 대비 로직, 컨테이너를 통합 관리합니다.
 - **Toast System**: `src/components/ui/Toast.tsx`를 통한 전역 상태 비의존적 알림 처리.
+- **Recent Provider Persistence**:
+  - `/login`은 `clientId`별 최근 선택 소셜 제공자를 `localStorage`에 저장하고 재방문 시 UI에 반영합니다.
+  - 표시 색상은 클라이언트 시그니처 색(`gradientFrom`)을 우선 사용합니다.
 
 ---
 

@@ -2,20 +2,12 @@
 
 import { handleCallback } from '@/lib/api/auth';
 import { useAuthStore } from '@/store/authStore';
-import { Mode, Provider } from '@/types';
+import { Provider } from '@/types';
 import { motion } from 'framer-motion';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 
 import { MOCK_CLIENT_ID } from '@/lib/api/mock';
-
-function getTargetOrigin(redirectUri: string) {
-  try {
-    return redirectUri ? new URL(redirectUri).origin : '*';
-  } catch {
-    return '*';
-  }
-}
 
 export function CallbackContent() {
   const params = useParams();
@@ -37,7 +29,6 @@ export function CallbackContent() {
 
     const clientId = sessionStorage.getItem('auth_clientId') || (isDev ? MOCK_CLIENT_ID : '');
     const redirectUri = sessionStorage.getItem('auth_redirectUri') ?? (isDev ? 'http://localhost:4000/callback' : '');
-    const mode = (sessionStorage.getItem('auth_mode') ?? 'redirect') as Mode;
 
     handleCallback(provider, code, state)
       .then(({ accessToken, needsJoin, isNewUser }) => {
@@ -47,17 +38,9 @@ export function CallbackContent() {
           const joinParams = new URLSearchParams({ 
             clientId, 
             redirectUri, 
-            mode,
             isNewUser: isNewUser.toString() 
           });
           router.replace(`/join?${joinParams.toString()}`);
-          return;
-        }
-
-        if (mode === 'popup') {
-          const targetOrigin = getTargetOrigin(redirectUri);
-          window.opener?.postMessage({ type: 'AUTH_SUCCESS', accessToken }, targetOrigin);
-          window.close();
           return;
         }
 
@@ -67,7 +50,6 @@ export function CallbackContent() {
       .finally(() => {
         sessionStorage.removeItem('auth_clientId');
         sessionStorage.removeItem('auth_redirectUri');
-        sessionStorage.removeItem('auth_mode');
       });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

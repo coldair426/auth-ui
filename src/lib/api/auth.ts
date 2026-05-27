@@ -1,4 +1,4 @@
-import { CallbackResponse, Mode, Provider } from '@/types';
+import { CallbackResponse, Provider } from '@/types';
 import api from './instance';
 import { MOCK_AUTH } from './mock';
 
@@ -6,7 +6,6 @@ export function getSocialLoginUrl(
   provider: Provider,
   clientId: string,
   redirectUri: string,
-  mode: Mode,
 ): Promise<{ url: string }> {
   if (process.env.NODE_ENV === 'development') {
     return Promise.resolve({ 
@@ -14,7 +13,7 @@ export function getSocialLoginUrl(
     });
   }
   return api
-    .get(`/auth/${provider}/url`, { params: { clientId, redirectUri, mode } })
+    .get(`/auth/${provider}/url`, { params: { clientId, redirectUri } })
     .then((res) => res.data);
 }
 
