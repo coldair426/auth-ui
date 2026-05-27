@@ -1,7 +1,5 @@
 export type Provider = 'naver' | 'kakao' | 'google';
 
-export type Mode = 'redirect' | 'popup';
-
 export interface OAuthClient {
   clientId: string;
   name: string;
@@ -10,13 +8,6 @@ export interface OAuthClient {
   gradientFrom: string;
   gradientTo: string;
   textDark?: boolean;
-  allowedModes: Mode[];
-}
-
-export interface LoginParams {
-  clientId: string;
-  redirectUri: string;
-  mode: Mode;
 }
 
 export interface CallbackResponse {

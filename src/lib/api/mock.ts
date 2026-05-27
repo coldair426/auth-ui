@@ -10,7 +10,6 @@ export const MOCK_CLIENT: OAuthClient = {
   faviconUrl: '/fishhi-favicon.png',
   gradientFrom: '#A4E1F1', // Sky Blue (Water)
   gradientTo: '#3FA9F5',   // Ocean Blue
-  allowedModes: ['redirect', 'popup'],
 };
 
 export const MOCK_AUTH = {

@@ -5,7 +5,6 @@ import { ClientLogo } from '@/components/ui/ClientLogo';
 import { LoadingCard } from '@/components/ui/LoadingCard';
 import { PageLayout } from '@/components/ui/PageLayout';
 import { joinProject } from '@/lib/api/auth';
-import { useAuthStore } from '@/store/authStore';
 import { motion } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useMemo } from 'react';
@@ -81,18 +80,10 @@ function ConsentItem({ id, label, sublabel, link, required, checked, onChange }:
   );
 }
 
-function getTargetOrigin(redirectUri: string) {
-  try {
-    return redirectUri ? new URL(redirectUri).origin : '*';
-  } catch {
-    return '*';
-  }
-}
-
 export function JoinContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { client, clientId, isLoading, redirectUri, mode } = useClientInfo();
+  const { client, clientId, isLoading, redirectUri } = useClientInfo();
   
   const isNewUser = searchParams.get('isNewUser') !== 'false';
 
@@ -117,13 +108,7 @@ export function JoinContent() {
     return consents.thirdParty; // Existing users only need to agree to information provision to the new project
   }, [consents, isNewUser]);
 
-  function handleComplete(accessToken: string) {
-    if (mode === 'popup') {
-      const targetOrigin = getTargetOrigin(redirectUri);
-      globalThis.opener?.postMessage({ type: 'AUTH_SUCCESS', accessToken }, targetOrigin);
-      globalThis.close();
-      return;
-    }
+  function handleComplete() {
     globalThis.location.assign(redirectUri);
   }
 
@@ -132,8 +117,7 @@ export function JoinContent() {
     setJoining(true);
     try {
       await joinProject(clientId);
-      const { accessToken } = useAuthStore.getState();
-      handleComplete(accessToken ?? '');
+      handleComplete();
     } catch {
       router.replace('/error?code=JOIN_FAILED');
     } finally {
@@ -143,10 +127,6 @@ export function JoinContent() {
 
   function handleCancel() {
     setCanceling(true);
-    if (mode === 'popup') {
-      globalThis.close();
-      return;
-    }
     globalThis.location.assign(redirectUri);
   }
 

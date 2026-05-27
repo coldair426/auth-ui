@@ -25,7 +25,7 @@ function isProvider(value: string | null): value is Provider {
 
 export function LoginContent() {
   const router = useRouter();
-  const { client, clientId, isLoading, redirectUri, mode } = useClientInfo();
+  const { client, clientId, isLoading, redirectUri } = useClientInfo();
 
   const [loadingProvider, setLoadingProvider] = useState<Provider | null>(null);
   const [isExiting, setIsExiting] = useState(false);
@@ -55,12 +55,11 @@ export function LoginContent() {
     if (!clientId || loadingProvider || isExiting) return;
     setLoadingProvider(provider);
     try {
-      const { url } = await getSocialLoginUrl(provider, clientId, redirectUri, mode);
+      const { url } = await getSocialLoginUrl(provider, clientId, redirectUri);
       localStorage.setItem(getRecentProviderKey(clientId), provider);
       setRecentProvider(provider);
       sessionStorage.setItem('auth_clientId', clientId);
       sessionStorage.setItem('auth_redirectUri', redirectUri);
-      sessionStorage.setItem('auth_mode', mode);
       
       setIsExiting(true);
       setTimeout(() => {
