@@ -5,13 +5,23 @@ import { ClientLogo } from '@/components/ui/ClientLogo';
 import { LoadingCard } from '@/components/ui/LoadingCard';
 import { PageLayout } from '@/components/ui/PageLayout';
 import { getSocialLoginUrl } from '@/lib/api/auth';
+import { isLightColor } from '@/lib/utils/color';
 import { Provider } from '@/types';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useClientInfo } from '@/hooks/useClientInfo';
 
 const PROVIDERS: Provider[] = ['naver', 'kakao', 'google'];
+const RECENT_PROVIDER_PREFIX = 'auth_recent_provider';
+
+function getRecentProviderKey(clientId: string) {
+  return `${RECENT_PROVIDER_PREFIX}:${clientId}`;
+}
+
+function isProvider(value: string | null): value is Provider {
+  return !!value && PROVIDERS.includes(value as Provider);
+}
 
 export function LoginContent() {
   const router = useRouter();
@@ -19,12 +29,35 @@ export function LoginContent() {
 
   const [loadingProvider, setLoadingProvider] = useState<Provider | null>(null);
   const [isExiting, setIsExiting] = useState(false);
+  const [recentProvider, setRecentProvider] = useState<Provider | null>(null);
+
+  useEffect(() => {
+    /* eslint-disable react-hooks/set-state-in-effect */
+    if (!clientId) {
+      setRecentProvider(null);
+      return;
+    }
+
+    const savedProvider = localStorage.getItem(getRecentProviderKey(clientId));
+    setRecentProvider(isProvider(savedProvider) ? savedProvider : null);
+    /* eslint-enable react-hooks/set-state-in-effect */
+  }, [clientId]);
+
+  const recentBadgeStyle = useMemo(() => {
+    if (!client) return { backgroundColor: '#111827', color: '#ffffff' };
+    return {
+      backgroundColor: client.gradientFrom,
+      color: isLightColor(client.gradientFrom) ? '#111827' : '#ffffff',
+    };
+  }, [client]);
 
   async function handleLogin(provider: Provider) {
     if (!clientId || loadingProvider || isExiting) return;
     setLoadingProvider(provider);
     try {
       const { url } = await getSocialLoginUrl(provider, clientId, redirectUri, mode);
+      localStorage.setItem(getRecentProviderKey(clientId), provider);
+      setRecentProvider(provider);
       sessionStorage.setItem('auth_clientId', clientId);
       sessionStorage.setItem('auth_redirectUri', redirectUri);
       sessionStorage.setItem('auth_mode', mode);
@@ -80,7 +113,16 @@ export function LoginContent() {
       <div className="flex flex-col gap-2.5 md:gap-3 mb-6 md:mb-8">
         {PROVIDERS.map((provider, index) => (
           <motion.div key={provider} initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4, delay: 1.1 + index * 0.08 }}>
-            <SocialLoginButton provider={provider} onClick={() => handleLogin(provider)} disabled={!!loadingProvider} isLoading={loadingProvider === provider} isDimmed={!!loadingProvider && loadingProvider !== provider} />
+            <SocialLoginButton
+              provider={provider}
+              onClick={() => handleLogin(provider)}
+              disabled={!!loadingProvider}
+              isLoading={loadingProvider === provider}
+              isDimmed={!!loadingProvider && loadingProvider !== provider}
+              isRecent={recentProvider === provider}
+              recentColor={recentBadgeStyle.backgroundColor}
+              recentTextColor={recentBadgeStyle.color}
+            />
           </motion.div>
         ))}
       </div>

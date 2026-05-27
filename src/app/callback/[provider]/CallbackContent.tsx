@@ -9,6 +9,14 @@ import { useEffect } from 'react';
 
 import { MOCK_CLIENT_ID } from '@/lib/api/mock';
 
+function getTargetOrigin(redirectUri: string) {
+  try {
+    return redirectUri ? new URL(redirectUri).origin : '*';
+  } catch {
+    return '*';
+  }
+}
+
 export function CallbackContent() {
   const params = useParams();
   const searchParams = useSearchParams();
@@ -47,7 +55,7 @@ export function CallbackContent() {
         }
 
         if (mode === 'popup') {
-          const targetOrigin = redirectUri ? new URL(redirectUri).origin : '*';
+          const targetOrigin = getTargetOrigin(redirectUri);
           window.opener?.postMessage({ type: 'AUTH_SUCCESS', accessToken }, targetOrigin);
           window.close();
           return;
