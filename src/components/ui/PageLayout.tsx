@@ -49,7 +49,7 @@ export function PageLayout({
 
         {/* 배경 Orb 애니메이션 - 데스크탑 전용 (모바일에서는 정적 그라데이션) */}
         <div
-          className="md:hidden absolute inset-0 opacity-40 dark:opacity-25"
+          className="md:hidden absolute inset-0 opacity-40 dark:opacity-18"
           style={{
             background: `radial-gradient(circle at 20% 0%, ${from} 0%, transparent 50%), radial-gradient(circle at 80% 100%, ${to} 0%, transparent 50%)`,
           }}
@@ -63,7 +63,7 @@ export function PageLayout({
             rotate: [0, 120, 240, 360],
           }}
           transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-          className="hidden md:block absolute -top-[15%] -left-[10%] w-[800px] h-[800px] rounded-full mix-blend-multiply dark:mix-blend-normal opacity-35 dark:opacity-20"
+          className="hidden md:block absolute -top-[15%] -left-[10%] w-[800px] h-[800px] rounded-full mix-blend-multiply dark:mix-blend-normal opacity-35 dark:opacity-12"
           style={{ filter: 'blur(100px)', background: `radial-gradient(circle, ${from} 0%, transparent 70%)` }}
         />
 
@@ -75,7 +75,7 @@ export function PageLayout({
             rotate: [360, 240, 120, 0],
           }}
           transition={{ duration: 13, repeat: Infinity, ease: "easeInOut" }}
-          className="hidden md:block absolute -bottom-[15%] -right-[15%] w-[900px] h-[900px] rounded-full mix-blend-multiply dark:mix-blend-normal opacity-30 dark:opacity-15"
+          className="hidden md:block absolute -bottom-[15%] -right-[15%] w-[900px] h-[900px] rounded-full mix-blend-multiply dark:mix-blend-normal opacity-30 dark:opacity-10"
           style={{ filter: 'blur(120px)', background: `radial-gradient(circle, ${to} 0%, transparent 70%)` }}
         />
 
@@ -86,7 +86,7 @@ export function PageLayout({
             scale: [0.8, 1.2, 0.8],
           }}
           transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
-          className="hidden md:block absolute top-[20%] right-[5%] w-[600px] h-[600px] rounded-full mix-blend-overlay opacity-15 dark:opacity-10"
+          className="hidden md:block absolute top-[20%] right-[5%] w-[600px] h-[600px] rounded-full mix-blend-overlay opacity-15 dark:opacity-6"
           style={{ filter: 'blur(110px)', background: `radial-gradient(circle, #6366f1 0%, transparent 70%)` }}
         />
 
@@ -97,7 +97,7 @@ export function PageLayout({
             scale: [1, 0.7, 1.1, 1],
           }}
           transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
-          className="hidden md:block absolute bottom-[10%] left-[5%] w-[500px] h-[500px] rounded-full mix-blend-soft-light opacity-20 dark:opacity-10"
+          className="hidden md:block absolute bottom-[10%] left-[5%] w-[500px] h-[500px] rounded-full mix-blend-soft-light opacity-20 dark:opacity-7"
           style={{ filter: 'blur(90px)', background: `radial-gradient(circle, #06b6d4 0%, transparent 70%)` }}
         />
       </div>
@@ -125,16 +125,30 @@ export function PageLayout({
             ease: [0.22, 1, 0.36, 1],
             delay: 0.2,
           }}
-          className="relative w-full rounded-[40px] md:rounded-[64px] md:backdrop-blur-[50px] bg-white/95 md:bg-white/45 dark:bg-zinc-900/95 md:dark:bg-zinc-900/70 border border-black/10 dark:border-white/[0.08] overflow-hidden shadow-2xl"
+          className="relative w-full rounded-[40px] md:rounded-[64px] md:backdrop-blur-[50px] bg-white/95 md:bg-white/45 dark:bg-[rgba(24,24,27,0.97)] md:dark:bg-[rgba(24,24,27,0.84)] border border-black/10 dark:border-white/[0.14] overflow-hidden shadow-[0_40px_80px_-20px_rgba(0,0,0,0.08)] dark:shadow-[0_36px_90px_-28px_rgba(0,0,0,0.82),0_12px_36px_-18px_rgba(0,0,0,0.5)]"
           style={{ 
             width: `min(100%, ${width}px)`,
-            boxShadow: isBackgroundLight 
-              ? `0 40px 80px -20px rgba(0,0,0,0.08)` 
-              : `0 50px 100px -20px ${from}25`,
             outline: !isBackgroundLight ? `1px solid ${from}15` : 'none',
             outlineOffset: '-1px'
           }}
         >
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-[1px] hidden dark:block rounded-[39px] md:rounded-[63px]"
+            style={{
+              background: 'linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 18%, rgba(255,255,255,0) 42%, rgba(0,0,0,0.16) 100%)'
+            }}
+          />
+
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-8 top-0 hidden h-24 dark:block"
+            style={{
+              background: `radial-gradient(circle at top, ${from}14 0%, transparent 72%)`,
+              filter: 'blur(18px)',
+            }}
+          />
+
           {/* Shimmer Flare - 데스크탑 전용 (모바일 성능 보호) */}
           <motion.div
             animate={{ x: ['-200%', '200%'], opacity: [0, 0.7, 0] }}

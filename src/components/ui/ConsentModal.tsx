@@ -91,8 +91,16 @@ export function ConsentModal({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          className="relative w-full max-w-md bg-white dark:bg-zinc-900 border border-black/10 dark:border-white/10 rounded-[32px] p-6 md:p-8 shadow-2xl overflow-hidden"
+          className="relative w-full max-w-md bg-white dark:bg-[rgba(24,24,27,0.96)] border border-black/10 dark:border-white/[0.14] rounded-[32px] p-6 md:p-8 shadow-2xl dark:shadow-[0_36px_90px_-28px_rgba(0,0,0,0.82),0_12px_36px_-18px_rgba(0,0,0,0.5)] overflow-hidden"
         >
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-[1px] hidden dark:block rounded-[31px]"
+            style={{
+              background: 'linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 20%, rgba(255,255,255,0) 44%, rgba(0,0,0,0.16) 100%)'
+            }}
+          />
+
           <h2 className="text-xl md:text-2xl font-extrabold tracking-tight text-gray-900 dark:text-white mb-6">
             {getTitle()}
           </h2>
