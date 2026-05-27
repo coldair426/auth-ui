@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect } from 'react';
 import { Heading, Description, STAGGER_CONTAINER } from '@/components/ui/Typography';
+import { BrandFooter } from '@/components/ui/BrandFooter';
 import { Button } from '@/components/ui/Button';
 import { PageLayout } from '@/components/ui/PageLayout';
 
@@ -38,7 +39,7 @@ function ErrorContent() {
   }, [errorInfo.title]);
 
   return (
-    <PageLayout width={400} footer={<Footer />}>
+    <PageLayout width={400} footer={<BrandFooter />}>
       <motion.div
         initial="hidden"
         animate="show"
@@ -96,19 +97,6 @@ function ErrorContent() {
         </motion.div>
       </motion.div>
     </PageLayout>
-  );
-}
-
-function Footer() {
-  return (
-    <motion.footer 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ delay: 1.0, duration: 1 }}
-      className="text-[11px] font-bold text-amber-900/30 dark:text-amber-100/20 tracking-[0.2em] uppercase whitespace-nowrap"
-    >
-      © 2026 Team Breadkun
-    </motion.footer>
   );
 }
 
