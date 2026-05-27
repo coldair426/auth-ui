@@ -17,6 +17,10 @@ const ERROR_MESSAGES: Record<string, { title: string; desc: string }> = {
     title: '알 수 없는 서비스에요',
     desc: '요청하신 서비스 정보를 찾을 수 없습니다.\n주소를 확인해주세요.',
   },
+  INVALID_MODE: {
+    title: '지원하지 않는 로그인 방식이에요',
+    desc: '요청하신 인증 방식을 사용할 수 없습니다.\n서비스 설정을 확인해주세요.',
+  },
   UNAUTHORIZED: {
     title: '권한이 없어요',
     desc: '접근 권한이 없거나\n세션이 만료되었습니다.',

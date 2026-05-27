@@ -81,6 +81,14 @@ function ConsentItem({ id, label, sublabel, link, required, checked, onChange }:
   );
 }
 
+function getTargetOrigin(redirectUri: string) {
+  try {
+    return redirectUri ? new URL(redirectUri).origin : '*';
+  } catch {
+    return '*';
+  }
+}
+
 export function JoinContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -111,7 +119,7 @@ export function JoinContent() {
 
   function handleComplete(accessToken: string) {
     if (mode === 'popup') {
-      const targetOrigin = redirectUri ? new URL(redirectUri).origin : '*';
+      const targetOrigin = getTargetOrigin(redirectUri);
       globalThis.opener?.postMessage({ type: 'AUTH_SUCCESS', accessToken }, targetOrigin);
       globalThis.close();
       return;

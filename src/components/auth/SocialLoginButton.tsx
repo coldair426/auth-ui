@@ -10,6 +10,9 @@ interface SocialLoginButtonProps {
   disabled?: boolean;
   isLoading?: boolean;
   isDimmed?: boolean;
+  isRecent?: boolean;
+  recentColor?: string;
+  recentTextColor?: string;
 }
 
 const accentColors: Record<Provider, string> = {
@@ -68,6 +71,9 @@ export function SocialLoginButton({
   disabled = false,
   isLoading = false,
   isDimmed = false,
+  isRecent = false,
+  recentColor = accentColors[provider],
+  recentTextColor = '#ffffff',
 }: SocialLoginButtonProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [ripples, setRipples] = useState<{ x: number; y: number; id: number }[]>([]);
@@ -129,9 +135,17 @@ export function SocialLoginButton({
           config.icon
         )}
       </div>
-      <span className="relative z-10 flex-1 text-left">{config.label}</span>
+      <span className="relative z-10 flex-1 text-left min-w-0">{config.label}</span>
+      {isRecent && !isLoading && (
+        <span
+          className="relative z-10 shrink-0 rounded-full px-2.5 py-1 text-[10px] font-black leading-none shadow-sm"
+          style={{ backgroundColor: recentColor, color: recentTextColor }}
+        >
+          최근 로그인
+        </span>
+      )}
       {!isLoading && (
-        <span className="relative z-10 text-black/20 text-lg font-light">
+        <span className="relative z-10 shrink-0 text-black/20 text-lg font-light">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="9 18 15 12 9 6" />
           </svg>
