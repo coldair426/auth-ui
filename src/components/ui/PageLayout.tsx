@@ -39,9 +39,9 @@ export function PageLayout({
         className="fixed inset-0 z-[1] pointer-events-none overflow-hidden"
         style={{ contain: 'strict', willChange: 'transform', transform: 'translateZ(0)' }}
       >
-        {/* Cinematic Grain Overlay - 데스크탑 전용 (Galaxy 호환성 문제로 모바일 비활성화) */}
+        {/* Cinematic Grain Overlay - 모바일/데스크탑 공통 (모바일은 더 낮은 opacity) */}
         <div
-          className="hidden md:block absolute inset-0 opacity-[0.15] dark:opacity-[0.2] mix-blend-overlay"
+          className="absolute inset-0 opacity-[0.05] md:opacity-[0.08] dark:opacity-[0.07] md:dark:opacity-[0.12] mix-blend-overlay"
           style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
           }}
@@ -63,7 +63,7 @@ export function PageLayout({
             rotate: [0, 120, 240, 360],
           }}
           transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-          className="hidden md:block absolute -top-[15%] -left-[10%] w-[800px] h-[800px] rounded-full mix-blend-multiply dark:mix-blend-normal opacity-60 dark:opacity-30"
+          className="hidden md:block absolute -top-[15%] -left-[10%] w-[800px] h-[800px] rounded-full mix-blend-multiply dark:mix-blend-normal opacity-35 dark:opacity-20"
           style={{ filter: 'blur(100px)', background: `radial-gradient(circle, ${from} 0%, transparent 70%)` }}
         />
 
@@ -75,7 +75,7 @@ export function PageLayout({
             rotate: [360, 240, 120, 0],
           }}
           transition={{ duration: 13, repeat: Infinity, ease: "easeInOut" }}
-          className="hidden md:block absolute -bottom-[15%] -right-[15%] w-[900px] h-[900px] rounded-full mix-blend-multiply dark:mix-blend-normal opacity-50 dark:opacity-25"
+          className="hidden md:block absolute -bottom-[15%] -right-[15%] w-[900px] h-[900px] rounded-full mix-blend-multiply dark:mix-blend-normal opacity-30 dark:opacity-15"
           style={{ filter: 'blur(120px)', background: `radial-gradient(circle, ${to} 0%, transparent 70%)` }}
         />
 
@@ -86,7 +86,7 @@ export function PageLayout({
             scale: [0.8, 1.2, 0.8],
           }}
           transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
-          className="hidden md:block absolute top-[20%] right-[5%] w-[600px] h-[600px] rounded-full mix-blend-overlay opacity-30 dark:opacity-20"
+          className="hidden md:block absolute top-[20%] right-[5%] w-[600px] h-[600px] rounded-full mix-blend-overlay opacity-15 dark:opacity-10"
           style={{ filter: 'blur(110px)', background: `radial-gradient(circle, #6366f1 0%, transparent 70%)` }}
         />
 
@@ -137,9 +137,9 @@ export function PageLayout({
         >
           {/* Shimmer Flare - 데스크탑 전용 (모바일 성능 보호) */}
           <motion.div
-            animate={{ x: ['-200%', '200%'], opacity: [0, 1, 0] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", repeatDelay: 2 }}
-            className="hidden md:block absolute inset-0 bg-gradient-to-r from-transparent via-white/40 dark:via-white/10 to-transparent pointer-events-none z-[11]"
+            animate={{ x: ['-200%', '200%'], opacity: [0, 0.7, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", repeatDelay: 5 }}
+            className="hidden md:block absolute inset-0 bg-gradient-to-r from-transparent via-white/20 dark:via-white/6 to-transparent pointer-events-none z-[11]"
           />
 
           {/* 카드 내부 우측 상단 테마 토글 */}
