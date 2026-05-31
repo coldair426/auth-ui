@@ -33,7 +33,7 @@
   - **Error Page Integration**: 에러 페이지(`src/app/error/page.tsx`)는 특정 서비스에 종속되지 않고 **"빵돌이 통합 인증"** 서비스의 정체성을 유지합니다. 브랜드 컬러인 Amber 테마와 플로팅 로고 애니메이션을 적용하며, 탭 타이틀은 에러 타이틀(예: `서비스 연결이 필요해요`)을 포함하여 표시합니다.
 - **Independent Asset Management**:
   - 로고(`logoUrl`)와 파비콘(`faviconUrl`)은 독립적으로 관리됩니다. 탭 아이콘 설정 시 `faviconUrl`을 최우선으로 하며, 없을 경우에만 `logoUrl`을 폴백으로 사용합니다.
-- **Cinematic Texture (Unified)**: 모바일/데스크탑 공통으로 SVG 필름 그레인(Grain) 오버레이를 적용하여 아날로그적인 질감을 부여합니다. `mix-blend-overlay` 사용. 기기별 opacity: 모바일 `0.05`(라이트) / `0.07`(다크), 데스크탑 `0.08`(라이트) / `0.12`(다크). 과도한 효과로 디자인이 손상되지 않도록 의도적으로 낮은 수치를 유지합니다.
+- **Cinematic Texture (Unified)**: 모바일/데스크탑 공통으로 SVG 필름 그레인(Grain) 오버레이를 적용하여 아날로그적인 질감을 부여합니다. `mix-blend-overlay` 사용. 기기별 opacity: 모바일/데스크탑 공통 `0.05`(라이트) / `0.07`(다크). 과도한 효과로 디자인이 손상되지 않도록 의도적으로 낮은 수치를 유지합니다.
 
 ### 2. 표준 UI 구성 요소 (Standard UI Components)
 모든 새로운 페이지는 아래의 공통 컴포넌트를 사용하여 톤앤매너를 유지해야 합니다.
