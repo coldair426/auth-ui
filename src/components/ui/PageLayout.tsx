@@ -55,67 +55,59 @@ export function PageLayout({
           }}
         />
 
-        <motion.div
-          animate={{
-            x: [0, 150, -100, 80, 0],
-            y: [0, -150, 120, -80, 0],
-            scale: [1, 1.4, 0.7, 1.2, 1],
-            rotate: [0, 120, 240, 360],
-          }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+        <div
           className="hidden md:block absolute -top-[15%] -left-[10%] w-[800px] h-[800px] rounded-full mix-blend-multiply dark:mix-blend-normal opacity-35 dark:opacity-12"
-          style={{ filter: 'blur(100px)', background: `radial-gradient(circle, ${from} 0%, transparent 70%)` }}
+          style={{
+            filter: 'blur(100px)',
+            background: `radial-gradient(circle, ${from} 0%, transparent 70%)`,
+            animation: 'orb-float-1 10s ease-in-out infinite',
+            willChange: 'transform',
+          }}
         />
 
-        <motion.div
-          animate={{
-            x: [0, -180, 120, -60, 0],
-            y: [0, 140, -150, 80, 0],
-            scale: [1, 0.8, 1.3, 0.9, 1],
-            rotate: [360, 240, 120, 0],
-          }}
-          transition={{ duration: 13, repeat: Infinity, ease: "easeInOut" }}
+        <div
           className="hidden md:block absolute -bottom-[15%] -right-[15%] w-[900px] h-[900px] rounded-full mix-blend-multiply dark:mix-blend-normal opacity-30 dark:opacity-10"
-          style={{ filter: 'blur(120px)', background: `radial-gradient(circle, ${to} 0%, transparent 70%)` }}
+          style={{
+            filter: 'blur(120px)',
+            background: `radial-gradient(circle, ${to} 0%, transparent 70%)`,
+            animation: 'orb-float-2 13s ease-in-out infinite',
+            willChange: 'transform',
+          }}
         />
 
-        <motion.div
-          animate={{
-            x: [0, 200, -150, 0],
-            y: [0, 100, -100, 0],
-            scale: [0.8, 1.2, 0.8],
-          }}
-          transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
+        <div
           className="hidden md:block absolute top-[20%] right-[5%] w-[600px] h-[600px] rounded-full mix-blend-overlay opacity-15 dark:opacity-6"
-          style={{ filter: 'blur(110px)', background: `radial-gradient(circle, #6366f1 0%, transparent 70%)` }}
+          style={{
+            filter: 'blur(110px)',
+            background: 'radial-gradient(circle, #6366f1 0%, transparent 70%)',
+            animation: 'orb-float-3 16s ease-in-out infinite',
+            willChange: 'transform',
+          }}
         />
 
-        <motion.div
-          animate={{
-            x: [0, -150, 150, 0],
-            y: [0, -100, 100, 0],
-            scale: [1, 0.7, 1.1, 1],
-          }}
-          transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
+        <div
           className="hidden md:block absolute bottom-[10%] left-[5%] w-[500px] h-[500px] rounded-full mix-blend-soft-light opacity-20 dark:opacity-7"
-          style={{ filter: 'blur(90px)', background: `radial-gradient(circle, #06b6d4 0%, transparent 70%)` }}
+          style={{
+            filter: 'blur(90px)',
+            background: 'radial-gradient(circle, #06b6d4 0%, transparent 70%)',
+            animation: 'orb-float-4 14s ease-in-out infinite',
+            willChange: 'transform',
+          }}
         />
       </div>
 
       {/* 중앙 콘텐츠 (카드) */}
       <div className="relative z-10 w-full flex-1 flex items-center justify-center py-8 md:py-12">
         <motion.div
-          initial={{ y: 60, opacity: 0, scale: 0.94, filter: 'blur(10px)' }}
+          initial={{ y: 60, opacity: 0, scale: 0.94 }}
           animate={isExiting ? {
             y: -40,
             opacity: 0,
             scale: 0.96,
-            filter: 'blur(4px)',
           } : {
             y: 0,
             opacity: 1,
             scale: 1,
-            filter: 'blur(0px)',
           }}
           transition={isExiting ? {
             duration: 0.4,

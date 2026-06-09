@@ -7,12 +7,11 @@ import { motion, Variants } from 'framer-motion';
  * 빵돌이 통합 인증 표준 애니메이션 Variants
  */
 export const FADE_IN_UP: Variants = {
-  hidden: { y: 15, opacity: 0, filter: 'blur(10px)' },
-  show: { 
-    y: 0, 
-    opacity: 1, 
-    filter: 'blur(0px)', 
-    transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } 
+  hidden: { y: 15, opacity: 0 },
+  show: {
+    y: 0,
+    opacity: 1,
+    transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] }
   }
 };
 

@@ -70,6 +70,26 @@ body {
   to { background-position: 100% 50%; }
 }
 
+/* Orb 배경 애니메이션 — CSS compositor 스레드 전용 (JS 개입 없음) */
+@keyframes orb-float-1 {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  30%       { transform: translate3d(150px, -150px, 0) scale(1.4); }
+  65%       { transform: translate3d(-100px, 120px, 0) scale(0.75); }
+}
+@keyframes orb-float-2 {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  30%       { transform: translate3d(-180px, 140px, 0) scale(0.85); }
+  68%       { transform: translate3d(120px, -140px, 0) scale(1.25); }
+}
+@keyframes orb-float-3 {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(0.8); }
+  50%       { transform: translate3d(200px, 100px, 0) scale(1.2); }
+}
+@keyframes orb-float-4 {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50%       { transform: translate3d(-150px, -100px, 0) scale(0.75); }
+}
+
 /* ── Light Brand Strategy ── */
 /* 배경이 매우 밝은 색상일 때 강제로 라이트 모드 느낌의 가독성을 확보합니다. */
 /* 단, 다크 모드(html.dark) 상태일 때는 Tailwind의 다크 모드 색상이 우선되어야 하므로 제외합니다. */
